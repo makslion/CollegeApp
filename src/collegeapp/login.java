@@ -9,6 +9,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -16,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 import javax.swing.JOptionPane;
 
 /**
@@ -28,10 +30,12 @@ public class login extends javax.swing.JFrame implements Idatabase {
      * Creates new form login
      */
     private static ObjectInputStream input;
+    private static ObjectOutputStream output;
     private String db;
     
     public login() {
         initComponents();
+        this.rootPane.setDefaultButton(Login);
     
         String path = "./db.ser";
         File file = new File(path);
@@ -48,8 +52,9 @@ public class login extends javax.swing.JFrame implements Idatabase {
             openFile();
             db = readRecords();
             closeFile();
-            
         }
+        
+        
     }
     
     
@@ -100,6 +105,22 @@ public class login extends javax.swing.JFrame implements Idatabase {
         catch(IOException ioException){
             System.err.println("Error closing file. Terminating.");
             System.exit(1);
+        }
+    }
+     
+     public static void addRecords(String DBurl, String DBname, String DBuser, String DBpassword){
+        try {
+            output = new ObjectOutputStream(
+                    Files.newOutputStream(Paths.get("db.ser")));
+            
+            file db = new file(DBurl,DBname,DBuser,DBpassword);
+            output.writeObject(db);
+            
+            if(output != null)
+                output.close();
+        }
+        catch(NoSuchElementException | IOException e){
+            JOptionPane.showMessageDialog(null, e,"Can't write to file", JOptionPane.ERROR_MESSAGE);
         }
     }
      
@@ -157,7 +178,7 @@ public class login extends javax.swing.JFrame implements Idatabase {
                                this.setVisible(false);
                                break;
                            case "faculty":
-                               new facultyGUI().setVisible(true);
+                               new facultyGUI(username).setVisible(true);
                                new policies().setVisible(true);
                                this.setVisible(false);
                                break;
@@ -223,7 +244,6 @@ public class login extends javax.swing.JFrame implements Idatabase {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
-        setAlwaysOnTop(true);
         setName("loginFrame"); // NOI18N
         setResizable(false);
         getContentPane().setLayout(new java.awt.CardLayout());
@@ -242,6 +262,7 @@ public class login extends javax.swing.JFrame implements Idatabase {
         });
 
         toConectionPanel.setText("Conection...");
+        toConectionPanel.setDefaultCapable(false);
         toConectionPanel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 toConectionPanelActionPerformed(evt);
@@ -384,8 +405,6 @@ public class login extends javax.swing.JFrame implements Idatabase {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        dbNamelabel.getAccessibleContext().setAccessibleName("DB Name:");
-
         getContentPane().add(conectionPanel, "card3");
 
         pack();
@@ -400,6 +419,10 @@ public class login extends javax.swing.JFrame implements Idatabase {
     private void toLoginPanelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toLoginPanelActionPerformed
         conectionPanel.setVisible(false);
         loginPanel.setVisible(true);
+        
+        // updating .ser file to ceep it up to date
+        addRecords(dbURLfield.getText(),dbNamefield.getText(),
+                dbUSERfield.getText(),dbPSWDfield.getText());
     }//GEN-LAST:event_toLoginPanelActionPerformed
 
     private void testConectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testConectionActionPerformed

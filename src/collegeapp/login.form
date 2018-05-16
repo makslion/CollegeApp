@@ -4,7 +4,6 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="title" type="java.lang.String" value="Login"/>
-    <Property name="alwaysOnTop" type="boolean" value="true"/>
     <Property name="name" type="java.lang.String" value="loginFrame" noResource="true"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
@@ -112,6 +111,7 @@
         <Component class="javax.swing.JButton" name="toConectionPanel">
           <Properties>
             <Property name="text" type="java.lang.String" value="Conection..."/>
+            <Property name="defaultCapable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="toConectionPanelActionPerformed"/>
@@ -260,9 +260,6 @@
             <Property name="text" type="java.lang.String" value="DB Name:"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="DB Name:"/>
-          </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JTextField" name="dbURLfield">
           <Properties>
