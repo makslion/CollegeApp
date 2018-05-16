@@ -7,3 +7,4 @@ To rebuild project:
 
 Versions:
 - 0.1 Basic GUI
+- 0.2 Implemented "Student" and "Faculty" 
