@@ -25,6 +25,7 @@ public class facultyGUI extends facultyDatabase {
      * Creates new form facultyGUI
      */
     private static String Fid;
+    private static String Sid;
     
     private String timetableQuery = "SELECT timetable.Day,\n" +
                                     "		timetable.Subject,\n" +
@@ -84,6 +85,30 @@ public class facultyGUI extends facultyDatabase {
                                 "WHERE group_details.Superviser = ?\n" +
                                 "ORDER BY student.Sid;";
     
+    private String studentGradeQuery = "SELECT assignment_grades.Aid AS 'Assignment',\n" +
+                                    "		assignment_grades.Sid AS 'Student',\n" +
+                                    "        assignment_grades.Grade\n" +
+                                    "FROM ((assignment_grades\n" +
+                                    "	INNER JOIN assignments ON assignment_grades.Aid = assignments.Aid)\n" +
+                                    "    INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
+                                    "WHERE subjects.Lecturer = ?;";
+    
+    private String studentFillQuery = "SELECT assignments.Aid\n" +
+                                    "FROM (assignments\n" +
+                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
+                                    "WHERE subjects.Lecturer = ?;";
+    
+    private String setStudentQuery = "SELECT assignment_grades.Sid\n" +
+                                    "FROM assignment_grades\n" +
+                                    "WHERE assignment_grades.Aid = ?;";
+    
+    private String setStudentGradeQuery = "SELECT assignment_grades.Grade\n" +
+                                            "FROM assignment_grades\n" +
+                                            "WHERE assignment_grades.Aid = ? AND assignment_grades.Sid = ?;";
+    
+    private String modifyStudentQuery = "UPDATE `programming_db`.`assignment_grades` SET `Grade`=? WHERE `Aid`=? and`Sid`=?;";
+    
+    
     public facultyGUI(String fid) {
         initComponents();
         readConnectionDetails();
@@ -93,9 +118,84 @@ public class facultyGUI extends facultyDatabase {
         updateTimetableTable(prepareQuery(timetableQuery));
         updateassignmentsTable(prepareQuery(assignmentsQuery));
         updateStudentTable(prepareQuery(studentQuery));
+        updateStudentGradesTable(prepareQuery(studentGradeQuery));
         assignmentFill();
+        studentFill();
         
         
+    }
+    
+    private void modifyStudentGrade(String aid, String sid, String grade){
+        try {
+            
+            Connection conn = DriverManager.getConnection(connectionDetails);
+            connected = true;
+            
+            PrepStatement = conn.prepareStatement(modifyStudentQuery);
+            PrepStatement.setString(1, grade);
+            PrepStatement.setString(2, aid);
+            PrepStatement.setString(3, sid);
+            
+            int rs = PrepStatement.executeUpdate();
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    
+    }
+    
+    private void setStudentGrade(String aid, String sid){
+        ResultSet rs = null;
+        
+        try {
+            
+            Connection conn = DriverManager.getConnection(connectionDetails);
+            connected = true;
+            
+            PrepStatement = conn.prepareStatement(setStudentGradeQuery);
+            PrepStatement.setString(1, aid);
+            PrepStatement.setString(2, sid);
+            
+            rs = PrepStatement.executeQuery();
+            
+            while(rs.next()){
+                studentGradeField.setText(rs.getString(1));
+            
+            }
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    
+    }
+    
+    private void setStudent(String aid){
+         ResultSet rs = null;
+         studentStudentCombo.removeAllItems();
+         
+        
+        try {
+            
+            Connection conn = DriverManager.getConnection(connectionDetails);
+            connected = true;
+            
+            PrepStatement = conn.prepareStatement(setStudentQuery);
+            PrepStatement.setString(1, aid);
+            
+            rs = PrepStatement.executeQuery();
+            
+            
+            while(rs.next()){
+                studentStudentCombo.addItem(rs.getString(1));
+                Sid = rs.getString(1);
+                
+                
+            
+            }
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     private void delete(String aid){
@@ -180,6 +280,19 @@ public class facultyGUI extends facultyDatabase {
     
     }
     
+    private void studentFill(){
+        ResultSet rs = prepareQuery(studentFillQuery);
+        
+        try {
+            while(rs.next()){
+                studentAssignmentCombo.addItem(rs.getString(1));
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this , e, "Ooops", JOptionPane.ERROR_MESSAGE);
+        }
+    
+    }
+    
     
     private void createAssignment(){
         ResultSet resultSet = null;
@@ -243,6 +356,10 @@ public class facultyGUI extends facultyDatabase {
     
     private void updateStudentTable(ResultSet rs){
         studentTable.setModel(DbUtils.resultSetToTableModel(rs));
+    }
+    
+    private void updateStudentGradesTable(ResultSet rs) {
+        studentGradesTable.setModel(DbUtils.resultSetToTableModel(rs));
     }
     
     
@@ -312,10 +429,21 @@ public class facultyGUI extends facultyDatabase {
         jScrollPane3 = new javax.swing.JScrollPane();
         studentTable = new javax.swing.JTable();
         studentRefreshButton = new javax.swing.JButton();
+        studentListLabel = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        studentGradesTable = new javax.swing.JTable();
+        assignmentGradesLabel = new javax.swing.JLabel();
+        studentModifyLabel = new javax.swing.JLabel();
+        studentAssignmentLabel = new javax.swing.JLabel();
+        studentStudentLabel = new javax.swing.JLabel();
+        studentGradeLabel = new javax.swing.JLabel();
+        studentAssignmentCombo = new javax.swing.JComboBox<>();
+        studentStudentCombo = new javax.swing.JComboBox<>();
+        studentGradeField = new javax.swing.JTextField();
+        studentApplyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Faculty");
-        setPreferredSize(new java.awt.Dimension(955, 531));
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -363,7 +491,7 @@ public class facultyGUI extends facultyDatabase {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55)
                 .addComponent(timetableRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Timetable", timetablePanel);
@@ -567,24 +695,19 @@ public class facultyGUI extends facultyDatabase {
                                     .addComponent(courseLabel1)
                                     .addComponent(dueDateLabel1)
                                     .addComponent(visibleLabel1))
+                                .addGap(36, 36, 36)
                                 .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(assignmentPanelLayout.createSequentialGroup()
-                                        .addGap(36, 36, 36)
-                                        .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(subjectField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(assignmentField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(comboBoxCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(assignmentPanelLayout.createSequentialGroup()
-                                        .addGap(36, 36, 36)
-                                        .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(subjectField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(assignmentField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(comboBoxCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(39, 39, 39)
-                                .addComponent(createAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(createAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(assignmentPanelLayout.createSequentialGroup()
                                 .addGap(56, 56, 56)
-                                .addComponent(assignmentLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(assignmentLabel1)))
                         .addGap(55, 55, 55)
                         .addComponent(jLabel5)
                         .addGap(29, 29, 29)
@@ -637,24 +760,132 @@ public class facultyGUI extends facultyDatabase {
             }
         });
 
+        studentListLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        studentListLabel.setText("Student list");
+
+        studentGradesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(studentGradesTable);
+
+        assignmentGradesLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        assignmentGradesLabel.setText("Assignment Grades");
+
+        studentModifyLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        studentModifyLabel.setText("Modify");
+
+        studentAssignmentLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        studentAssignmentLabel.setText("Assignment");
+
+        studentStudentLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        studentStudentLabel.setText("Student");
+
+        studentGradeLabel.setText("Grade");
+
+        studentAssignmentCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                studentAssignmentComboActionPerformed(evt);
+            }
+        });
+
+        studentStudentCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                studentStudentComboActionPerformed(evt);
+            }
+        });
+
+        studentApplyButton.setText("Apply");
+        studentApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                studentApplyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout studentPanelLayout = new javax.swing.GroupLayout(studentPanel);
         studentPanel.setLayout(studentPanelLayout);
         studentPanelLayout.setHorizontalGroup(
             studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3)
+            .addGroup(studentPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(66, 66, 66))
+            .addGroup(studentPanelLayout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addComponent(studentListLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(assignmentGradesLabel)
+                .addGap(223, 223, 223))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, studentPanelLayout.createSequentialGroup()
-                .addContainerGap(408, Short.MAX_VALUE)
+                .addGap(100, 100, 100)
                 .addComponent(studentRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(382, 382, 382))
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(213, 213, 213)
+                        .addComponent(studentAssignmentLabel))
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(204, 204, 204)
+                        .addComponent(studentAssignmentCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(studentStudentCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(studentModifyLabel)
+                            .addComponent(studentStudentLabel))))
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addComponent(studentGradeLabel))
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(studentGradeField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(studentApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
         );
         studentPanelLayout.setVerticalGroup(
             studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(studentPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
-                .addComponent(studentRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(studentListLabel)
+                    .addComponent(assignmentGradesLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE))
+                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(studentModifyLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(studentRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(studentPanelLayout.createSequentialGroup()
+                                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(studentAssignmentLabel)
+                                    .addComponent(studentStudentLabel)
+                                    .addComponent(studentGradeLabel))
+                                .addGap(18, 18, 18)
+                                .addGroup(studentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(studentAssignmentCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(studentStudentCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(studentGradeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(30, 30, 30))
+                    .addGroup(studentPanelLayout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addComponent(studentApplyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         jTabbedPane1.addTab("Student", studentPanel);
@@ -710,6 +941,23 @@ public class facultyGUI extends facultyDatabase {
         updateStudentTable(prepareQuery(studentQuery));
     }//GEN-LAST:event_studentRefreshButtonActionPerformed
 
+    private void studentAssignmentComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentAssignmentComboActionPerformed
+         setStudent(studentAssignmentCombo.getSelectedItem().toString());
+        
+    }//GEN-LAST:event_studentAssignmentComboActionPerformed
+
+    private void studentStudentComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentStudentComboActionPerformed
+        if (studentStudentCombo.getSelectedItem() != null)
+            Sid = studentStudentCombo.getSelectedItem().toString();
+        setStudentGrade(studentAssignmentCombo.getSelectedItem().toString(),Sid);
+        
+    }//GEN-LAST:event_studentStudentComboActionPerformed
+
+    private void studentApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentApplyButtonActionPerformed
+        modifyStudentGrade(studentAssignmentCombo.getSelectedItem().toString(),studentStudentCombo.getSelectedItem().toString(),studentGradeField.getText());
+        updateStudentGradesTable(prepareQuery(studentGradeQuery));
+    }//GEN-LAST:event_studentApplyButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -748,6 +996,7 @@ public class facultyGUI extends facultyDatabase {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> assignmentComboBox;
     private javax.swing.JTextField assignmentField;
+    private javax.swing.JLabel assignmentGradesLabel;
     private javax.swing.JLabel assignmentLabel1;
     private javax.swing.JLabel assignmentLabel2;
     private javax.swing.JPanel assignmentPanel;
@@ -770,10 +1019,21 @@ public class facultyGUI extends facultyDatabase {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton modifyAssignmentButton;
+    private javax.swing.JButton studentApplyButton;
+    private javax.swing.JComboBox<String> studentAssignmentCombo;
+    private javax.swing.JLabel studentAssignmentLabel;
+    private javax.swing.JTextField studentGradeField;
+    private javax.swing.JLabel studentGradeLabel;
+    private javax.swing.JTable studentGradesTable;
+    private javax.swing.JLabel studentListLabel;
+    private javax.swing.JLabel studentModifyLabel;
     private javax.swing.JPanel studentPanel;
     private javax.swing.JButton studentRefreshButton;
+    private javax.swing.JComboBox<String> studentStudentCombo;
+    private javax.swing.JLabel studentStudentLabel;
     private javax.swing.JTable studentTable;
     private javax.swing.JTextField subjectField1;
     private javax.swing.JTextField subjectField2;

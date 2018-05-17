@@ -5,10 +5,22 @@
  */
 package collegeapp;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Maksym Vavilov 16856
  */
 public abstract class adminDatabase extends facultyDatabase{
     
+    protected String directQuery;
+    
+    public adminDatabase(){
+    
+    }
 }
+
