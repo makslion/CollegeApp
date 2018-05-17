@@ -8,3 +8,4 @@ To rebuild project:
 Versions:
 - 0.1 Basic GUI
 - 0.2 Implemented "Student" and "Faculty" 
+- 0.3 Fixed Majority of bugs and implemented part of "Admin"
