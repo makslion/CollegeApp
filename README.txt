@@ -10,3 +10,4 @@ Versions:
 - 0.2 Implemented "Student" and "Faculty" 
 - 0.3 Fixed Majority of bugs and implemented part of "Admin"
 - 0.4 Implemented all required features. Complete working solution. 
+- 1.0 RELEASE. Fixed all known bugs and optimised. 
