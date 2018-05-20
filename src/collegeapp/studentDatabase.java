@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,9 +25,39 @@ public abstract class studentDatabase extends javax.swing.JFrame implements Idat
     
     
     protected PreparedStatement PrepStatement;
-    protected boolean connected;
     protected String connectionDetails;
     protected static ObjectInputStream input;
+    
+    
+    protected static String Sid;
+    
+    protected String assignmentQuery = "SELECT assignments.Aid AS 'Assignment',\n" +
+                                    "        subjects.Subject,\n" +
+                                    "        assignments.DueDate AS 'Due date',\n" +
+                                    "        assignment_grades.Grade\n" +
+                                    "FROM ((assignments\n" +
+                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
+                                    "   INNER JOIN assignment_grades ON assignments.Aid = assignment_grades.Aid)\n" +
+                                    "   WHERE Sid = ? AND Visible = 'yes';";
+    
+    protected String gradesQuery = "SELECT subjects.Subject,\n" +
+                                "		grades.Grade,\n" +
+                                "        grades.ExamGrade AS 'Exam Grade'\n" +
+                                "FROM (grades\n" +
+                                "	INNER JOIN subjects ON grades.SBid = subjects.SBid)\n" +
+                                "    WHERE Sid = ?;";
+    
+    protected String timetableQuery = "SELECT timetable.Day,\n" +
+                                "		timetable.Subject,\n" +
+                                "        timetable.Start,\n" +
+                                "        timetable.End\n" +
+                                "FROM (timetable\n" +
+                                "	INNER JOIN groups ON timetable.Gid = groups.Gid)\n" +
+                                "    WHERE Sid = ?"+ 
+                                "    ORDER BY Subject;";
+    
+    protected String pswdQuery = "UPDATE login SET `Password`=? WHERE `Username`=?;";
+    protected String pswdCheck = "SELECT login.Password FROM login WHERE login.Username = ?;";
     
     studentDatabase(){
     
@@ -36,15 +66,27 @@ public abstract class studentDatabase extends javax.swing.JFrame implements Idat
     
     
     
-    protected void logout(){
+    protected final void logout(){
         this.setVisible(false);
         new login().setVisible(true);
     }
     
     
+    @Override
+    public final void openFile(){
+        try{ // open file
+            input = new ObjectInputStream(
+                    Files.newInputStream(Paths.get("db.ser")));
+            
+        }
+        catch(IOException e){
+            JOptionPane.showMessageDialog(null, e,"Can't open file", JOptionPane.ERROR_MESSAGE);
+            System.exit(1); // terminate the program            
+        }
+    }
     
-    
-    protected void readConnectionDetails(){
+    @Override
+    public final void readConnectionDetails(){
         try {
             input = new ObjectInputStream(
                     Files.newInputStream(Paths.get("db.ser")));
@@ -64,5 +106,36 @@ public abstract class studentDatabase extends javax.swing.JFrame implements Idat
             System.err.println("Error reading from file. Terminating.");
         }
     }
+    
+    @Override
+     public final void closeFile(){
+        try{
+            if (input != null)
+                input.close();
+        }
+        catch(IOException ioException){
+            System.err.println("Error closing file. Terminating.");
+            System.exit(1);
+        }
+    }
+    
+    protected final ResultSet prepareQuery (String query, String id){
+        ResultSet resultSet = null;
+        
+        try {
+            Connection conn = DriverManager.getConnection(connectionDetails);
+            
+            PrepStatement = conn.prepareStatement(query);
+            PrepStatement.setString(1, id);
+            
+            resultSet = PrepStatement.executeQuery();
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+        return resultSet;
+    }
+    
+    
     
 }

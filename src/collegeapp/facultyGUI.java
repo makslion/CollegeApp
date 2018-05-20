@@ -24,109 +24,19 @@ public class facultyGUI extends facultyDatabase {
     /**
      * Creates new form facultyGUI
      */
-    private static String Fid;
-    private static String Sid;
-    
-    private String timetableQuery = "SELECT timetable.Day,\n" +
-                                    "		timetable.Subject,\n" +
-                                    "        timetable.Start,\n" +
-                                    "        timetable.End\n" +
-                                    "FROM (timetable\n" +
-                                    "	INNER JOIN group_details ON timetable.Gid = group_details.Gid)\n" +
-                                    "    WHERE timetable.Subject = (\n" +
-                                    "				SELECT Subject\n" +
-                                    "				FROM subjects\n" +
-                                    "                WHERE Lecturer = ?)\n" +
-                                    "    ORDER BY Subject;";
-    
-    private String assignmentsQuery = "SELECT assignments.Aid AS 'Assignment',\n" +
-                                    "		subjects.Subject,\n" +
-                                    "        assignments.Cid AS 'Course',\n" +
-                                    "        assignments.DueDate AS 'Due date',\n" +
-                                    "        assignments.Visible\n" +
-                                    "FROM (assignments\n" +
-                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                    "    WHERE subjects.Lecturer = ?;";
-    
-    private String assignmentFillQuery = "SELECT assignments.Aid,\n" +
-                                        "		subjects.Subject,\n" +
-                                        "        assignments.Cid\n" +
-                                        "FROM (assignments\n" +
-                                        "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                        "WHERE assignments.Subject = (SELECT subjects.SBid\n" +
-                                        "							FROM subjects\n" +
-                                        "                            WHERE subjects.Lecturer = ?);";
-    
-    private String createAssignmentQuery = "INSERT INTO `programming_db`.`assignments` "
-            + "(`Cid`, `Aid`, `Subject`, `Visible`, `DueDate`) VALUES (?, ?, ?, ?, ?);";
-    
-    private String getSubjectQuery = "SELECT subjects.SBid\n" +
-                                    "FROM subjects\n" +
-                                    "WHERE subjects.Subject = ?;";
-    
-    private String modifyGetQuery = "SELECT subjects.Subject,\n" +
-                                    "		assignments.Cid,\n" +
-                                    "        assignments.DueDate,\n" +
-                                    "        assignments.Visible\n" +
-                                    "FROM (assignments\n" +
-                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                    "WHERE assignments.Aid = ?;";
-    
-    private String modifyQuery = "UPDATE `programming_db`.`assignments` SET `Visible`=?, `DueDate`=? WHERE `Aid`=?;";
-    
-    private String deleteQuery = "DELETE FROM `programming_db`.`assignments` WHERE `Aid`=?;";
-    
-    private String studentQuery = "SELECT student.Sid AS 'Student ID',\n" +
-                                "		student.Fname AS 'First Name',\n" +
-                                "        student.Lname AS 'Last Name',\n" +
-                                "        student.Phone AS 'Contact Phone'\n" +
-                                "FROM (student\n" +
-                                "	INNER JOIN group_details ON student.Course = group_details.Cid)\n" +
-                                "WHERE group_details.Superviser = ?\n" +
-                                "ORDER BY student.Sid;";
-    
-    private String studentGradeQuery = "SELECT assignment_grades.Aid AS 'Assignment',\n" +
-                                    "		assignment_grades.Sid AS 'Student',\n" +
-                                    "        assignment_grades.Grade\n" +
-                                    "FROM ((assignment_grades\n" +
-                                    "	INNER JOIN assignments ON assignment_grades.Aid = assignments.Aid)\n" +
-                                    "    INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                    "WHERE subjects.Lecturer = ?;";
-    
-    private String studentFillQuery = "SELECT assignments.Aid\n" +
-                                    "FROM (assignments\n" +
-                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                    "WHERE subjects.Lecturer = ?;";
-    
-    private String setStudentQuery = "SELECT assignment_grades.Sid\n" +
-                                    "FROM assignment_grades\n" +
-                                    "WHERE assignment_grades.Aid = ?;";
-    
-    private String setStudentGradeQuery = "SELECT assignment_grades.Grade\n" +
-                                            "FROM assignment_grades\n" +
-                                            "WHERE assignment_grades.Aid = ? AND assignment_grades.Sid = ?;";
-    
-    private String modifyStudentQuery = "UPDATE `programming_db`.`assignment_grades` SET `Grade`=? WHERE `Aid`=? and`Sid`=?;";
-    
-    private String pswdCheck = "SELECT login.Password\n" +
-                                "FROM login\n" +
-                                "WHERE login.Username = ?;";
-    
-    private String pswdQuery = "UPDATE `programming_db`.`login` SET "
-                            + "`Password`=? "
-                            + "WHERE `Username`=?;";
-    
     
     public facultyGUI(String fid) {
         initComponents();
+        openFile();
         readConnectionDetails();
+        closeFile();
         
         Fid = fid;
         
-        updateTimetableTable(prepareQuery(timetableQuery));
-        updateassignmentsTable(prepareQuery(assignmentsQuery));
-        updateStudentTable(prepareQuery(studentQuery));
-        updateStudentGradesTable(prepareQuery(studentGradeQuery));
+        updateTimetableTable(prepareQuery(timetableQuery, Fid));
+        updateassignmentsTable(prepareQuery(assignmentsQuery, Fid));
+        updateStudentTable(prepareQuery(studentQuery, Fid));
+        updateStudentGradesTable(prepareQuery(studentGradeQuery, Fid));
         assignmentFill();
         studentFill();
         
@@ -145,7 +55,6 @@ public class facultyGUI extends facultyDatabase {
         
         try{
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(pswdCheck);
             PrepStatement.setString(1, Fid);
@@ -167,8 +76,6 @@ public class facultyGUI extends facultyDatabase {
                 JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
             }
             
-            if(connected)
-                conn.close();
             
             
         }
@@ -182,7 +89,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyStudentQuery);
             PrepStatement.setString(1, grade);
@@ -203,7 +109,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(setStudentGradeQuery);
             PrepStatement.setString(1, aid);
@@ -230,7 +135,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(setStudentQuery);
             PrepStatement.setString(1, aid);
@@ -255,7 +159,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(deleteQuery);
             PrepStatement.setString(1, aid);
@@ -275,7 +178,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyQuery);
             PrepStatement.setString(3, aid);
@@ -296,7 +198,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyGetQuery);
             PrepStatement.setString(1, aid);
@@ -319,7 +220,7 @@ public class facultyGUI extends facultyDatabase {
     
     
     private void assignmentFill(){
-        ResultSet rs = prepareQuery(assignmentFillQuery);
+        ResultSet rs = prepareQuery(assignmentFillQuery, Fid);
         
         try {
             while(rs.next()){
@@ -334,7 +235,7 @@ public class facultyGUI extends facultyDatabase {
     }
     
     private void studentFill(){
-        ResultSet rs = prepareQuery(studentFillQuery);
+        ResultSet rs = prepareQuery(studentFillQuery, Fid);
         
         try {
             while(rs.next()){
@@ -356,7 +257,6 @@ public class facultyGUI extends facultyDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(createAssignmentQuery);
             
@@ -380,7 +280,6 @@ public class facultyGUI extends facultyDatabase {
         PreparedStatement ps;
             try {
                 Connection conn = DriverManager.getConnection(connectionDetails);
-                connected = true;
 
                 ps = conn.prepareStatement(getSubjectQuery);
                 ps.setString(1, subjectName);
@@ -414,25 +313,6 @@ public class facultyGUI extends facultyDatabase {
     private void updateStudentGradesTable(ResultSet rs) {
         studentGradesTable.setModel(DbUtils.resultSetToTableModel(rs));
     }
-    
-    
-    private ResultSet prepareQuery (String query){
-        ResultSet resultSet = null;
-        try {
-            Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
-            
-            PrepStatement = conn.prepareStatement(query);
-            PrepStatement.setString(1, Fid);
-            
-            resultSet = PrepStatement.executeQuery();
-        }
-        catch(SQLException e){
-            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
-        return resultSet;
-    }
-
     
     
     /**
@@ -476,8 +356,8 @@ public class facultyGUI extends facultyDatabase {
         courseLabel2 = new javax.swing.JLabel();
         courseField2 = new javax.swing.JTextField();
         comboBoxCourse = new javax.swing.JComboBox<>();
-        datePicker1 = new org.jdesktop.swingx.JXDatePicker();
-        datePicker2 = new org.jdesktop.swingx.JXDatePicker();
+        datePicker1 = new com.toedter.calendar.JDateChooser();
+        datePicker2 = new com.toedter.calendar.JDateChooser();
         studentPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         studentTable = new javax.swing.JTable();
@@ -714,11 +594,6 @@ public class facultyGUI extends facultyDatabase {
                                         .addGap(18, 18, 18)
                                         .addComponent(courseField2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(assignmentPanelLayout.createSequentialGroup()
-                                        .addGap(3, 3, 3)
-                                        .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addGroup(assignmentPanelLayout.createSequentialGroup()
                                             .addGap(35, 35, 35)
@@ -731,16 +606,21 @@ public class facultyGUI extends facultyDatabase {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(visibleLabel1)))
                                     .addGroup(assignmentPanelLayout.createSequentialGroup()
-                                        .addGap(7, 7, 7)
-                                        .addComponent(datePicker2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(comboBoxModifyAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGap(9, 9, 9)
+                                        .addComponent(datePicker2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(comboBoxModifyAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(assignmentPanelLayout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
+                                        .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(assignmentPanelLayout.createSequentialGroup()
                                 .addGap(55, 55, 55)
                                 .addComponent(modifyAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(105, 105, 105)
                                 .addComponent(deleteAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(23, Short.MAX_VALUE))))
+                        .addContainerGap(27, Short.MAX_VALUE))))
         );
         assignmentPanelLayout.setVerticalGroup(
             assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -762,10 +642,10 @@ public class facultyGUI extends facultyDatabase {
                                     .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(subjectField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(assignmentField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(comboBoxCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(39, 39, 39)
+                                        .addComponent(comboBoxCourse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(comboBoxCreateAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(datePicker1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(40, 40, 40)
                                 .addComponent(createAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(assignmentPanelLayout.createSequentialGroup()
                                 .addGap(56, 56, 56)
@@ -779,7 +659,7 @@ public class facultyGUI extends facultyDatabase {
                             .addComponent(dueDateLabel2)
                             .addComponent(visibleLabel2)
                             .addComponent(courseLabel2)))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
                 .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(assignmentPanelLayout.createSequentialGroup()
                         .addGap(31, 31, 31)
@@ -787,12 +667,13 @@ public class facultyGUI extends facultyDatabase {
                         .addGap(34, 34, 34))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, assignmentPanelLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
-                        .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(subjectField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(assignmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(courseField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(datePicker2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(comboBoxModifyAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(subjectField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(assignmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(courseField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(comboBoxModifyAssignment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(datePicker2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(assignmentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(modifyAssignmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1038,17 +919,17 @@ public class facultyGUI extends facultyDatabase {
     }//GEN-LAST:event_formWindowClosing
 
     private void timetableRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableRefreshButtonActionPerformed
-        updateTimetableTable(prepareQuery(timetableQuery));
+        updateTimetableTable(prepareQuery(timetableQuery, Fid));
     }//GEN-LAST:event_timetableRefreshButtonActionPerformed
 
     private void assignmentsRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsRefreshButtonActionPerformed
-        updateassignmentsTable(prepareQuery(assignmentsQuery));
+        updateassignmentsTable(prepareQuery(assignmentsQuery, Fid));
     }//GEN-LAST:event_assignmentsRefreshButtonActionPerformed
 
     private void createAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createAssignmentButtonActionPerformed
         createAssignment();
         assignmentFill();
-        updateassignmentsTable(prepareQuery(assignmentsQuery));
+        updateassignmentsTable(prepareQuery(assignmentsQuery, Fid));
     }//GEN-LAST:event_createAssignmentButtonActionPerformed
 
     private void assignmentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentComboBoxActionPerformed
@@ -1057,16 +938,16 @@ public class facultyGUI extends facultyDatabase {
 
     private void modifyAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyAssignmentButtonActionPerformed
         modify(assignmentComboBox.getSelectedItem().toString());
-        updateassignmentsTable(prepareQuery(assignmentsQuery));
+        updateassignmentsTable(prepareQuery(assignmentsQuery, Fid));
     }//GEN-LAST:event_modifyAssignmentButtonActionPerformed
 
     private void deleteAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteAssignmentButtonActionPerformed
         delete(assignmentComboBox.getSelectedItem().toString());
-        updateassignmentsTable(prepareQuery(assignmentsQuery));
+        updateassignmentsTable(prepareQuery(assignmentsQuery, Fid));
     }//GEN-LAST:event_deleteAssignmentButtonActionPerformed
 
     private void studentRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentRefreshButtonActionPerformed
-        updateStudentTable(prepareQuery(studentQuery));
+        updateStudentTable(prepareQuery(studentQuery, Fid));
     }//GEN-LAST:event_studentRefreshButtonActionPerformed
 
     private void studentAssignmentComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentAssignmentComboActionPerformed
@@ -1083,7 +964,7 @@ public class facultyGUI extends facultyDatabase {
 
     private void studentApplyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentApplyButtonActionPerformed
         modifyStudentGrade(studentAssignmentCombo.getSelectedItem().toString(),studentStudentCombo.getSelectedItem().toString(),studentGradeField.getText());
-        updateStudentGradesTable(prepareQuery(studentGradeQuery));
+        updateStudentGradesTable(prepareQuery(studentGradeQuery, Fid));
     }//GEN-LAST:event_studentApplyButtonActionPerformed
 
     private void accountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountButtonActionPerformed
@@ -1119,6 +1000,7 @@ public class facultyGUI extends facultyDatabase {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new facultyGUI(Fid).setVisible(true);
             }
@@ -1150,8 +1032,8 @@ public class facultyGUI extends facultyDatabase {
     private javax.swing.JLabel courseLabel2;
     private javax.swing.JButton createAssignmentButton;
     private javax.swing.JLabel createAssignmentLabel;
-    private org.jdesktop.swingx.JXDatePicker datePicker1;
-    private org.jdesktop.swingx.JXDatePicker datePicker2;
+    private com.toedter.calendar.JDateChooser datePicker1;
+    private com.toedter.calendar.JDateChooser datePicker2;
     private javax.swing.JButton deleteAssignmentButton;
     private javax.swing.JLabel dueDateLabel1;
     private javax.swing.JLabel dueDateLabel2;

@@ -32,6 +32,7 @@ public class login extends javax.swing.JFrame implements Idatabase {
     private static ObjectInputStream input;
     private static ObjectOutputStream output;
     private String db;
+    private String connectionDetails = "";
     
     public login() {
         initComponents();
@@ -50,15 +51,16 @@ public class login extends javax.swing.JFrame implements Idatabase {
         }
         else { //if they exist import setting from file and set them
             openFile();
-            db = readRecords();
+            readConnectionDetails();
             closeFile();
+            db = connectionDetails;
         }
-        
-        
     }
     
     
-    private void openFile(){
+    
+    @Override
+    public void openFile(){
         try{ // open file
             input = new ObjectInputStream(
                     Files.newInputStream(Paths.get("db.ser")));
@@ -70,8 +72,9 @@ public class login extends javax.swing.JFrame implements Idatabase {
         }
     }
     
-    private String readRecords(){
-        String connectionDetails = "";
+    @Override
+    public final void readConnectionDetails(){
+        
         try {
             while (true){ // loop until there is an EOFException
                 file db = (file) input.readObject();
@@ -93,11 +96,11 @@ public class login extends javax.swing.JFrame implements Idatabase {
         catch(IOException ioException){
             System.err.println("Error reading from file. Terminating.");
         }
-        return connectionDetails;
         
     }
     
-     private void closeFile(){
+    @Override
+     public void closeFile(){
         try{
             if (input != null)
                 input.close();

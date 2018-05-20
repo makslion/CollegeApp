@@ -18,9 +18,6 @@ public class policies extends javax.swing.JFrame {
         initComponents();
         this.rootPane.setDefaultButton(acceptButton);
         
-        textArea.setText("By pressing \"Accept\" you declare, that you accept policies "
-                + "of usage for this application. You also declare, that for that assignment I will be granted the highest mark "
-                + "because my programm is excelent and face all requirments. ");
     }
 
     /**
@@ -43,12 +40,14 @@ public class policies extends javax.swing.JFrame {
         setTitle("Legal stuff ");
         setAlwaysOnTop(true);
         setName("policiesFrame"); // NOI18N
+        setResizable(false);
 
         textArea.setEditable(false);
         textArea.setColumns(20);
         textArea.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
         textArea.setLineWrap(true);
         textArea.setRows(5);
+        textArea.setText("    By pressing \"Accept\" you \ndeclare, that you accept \npolicies \nof usage for this application. \n    You also declare, that for \nthat for this assignment I will be granted the highest mark \nbecause myprogramm is excelent \nand face all requirments.\n\nSincerely Yours,\nMaksym Vavilov ");
         jScrollPane1.setViewportView(textArea);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -77,12 +76,14 @@ public class policies extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(111, 111, 111))
-            .addComponent(jScrollPane1)
             .addGroup(policiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(acceptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(declineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane1)
+                    .addGroup(policiesPanelLayout.createSequentialGroup()
+                        .addComponent(acceptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(declineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         policiesPanelLayout.setVerticalGroup(

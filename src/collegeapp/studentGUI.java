@@ -23,47 +23,19 @@ public class studentGUI extends studentDatabase {
      * Creates new form studentGUI
      */
     
-    private static String Sid;
-    private String assignmentQuery = "SELECT assignments.Aid AS 'Assignment',\n" +
-                                    "        subjects.Subject,\n" +
-                                    "        assignments.DueDate AS 'Due date',\n" +
-                                    "        assignment_grades.Grade\n" +
-                                    "FROM ((assignments\n" +
-                                    "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
-                                    "   INNER JOIN assignment_grades ON assignments.Aid = assignment_grades.Aid)\n" +
-                                    "   WHERE Sid = ? AND Visible = 'yes';";
-    
-    private String gradesQuery = "SELECT subjects.Subject,\n" +
-                                "		grades.Grade,\n" +
-                                "        grades.ExamGrade AS 'Exam Grade'\n" +
-                                "FROM (grades\n" +
-                                "	INNER JOIN subjects ON grades.SBid = subjects.SBid)\n" +
-                                "    WHERE Sid = ?;";
-    
-    private String timetableQuery = "SELECT timetable.Day,\n" +
-                                "		timetable.Subject,\n" +
-                                "        timetable.Start,\n" +
-                                "        timetable.End\n" +
-                                "FROM (timetable\n" +
-                                "	INNER JOIN groups ON timetable.Gid = groups.Gid)\n" +
-                                "    WHERE Sid = ?"+ 
-                                "    ORDER BY Subject;";
-    
-    private String pswdQuery = "UPDATE login SET `Password`=? WHERE `Username`=?;";
-    private String pasdCheck = "SELECT login.Password FROM login WHERE login.Username = ?;";
-    
-    
     public studentGUI(String sid) {
         initComponents();
         
         Sid = sid;
+        openFile();
         readConnectionDetails();
+        closeFile();
         
-        updateAssignmentTable(prepareQuery(assignmentQuery));
+        updateAssignmentTable(prepareQuery(assignmentQuery, Sid));
         
-        updateGradesTable(prepareQuery(gradesQuery));
+        updateGradesTable(prepareQuery(gradesQuery, Sid));
         
-        updateTimetableTable(prepareQuery(timetableQuery));
+        updateTimetableTable(prepareQuery(timetableQuery, Sid));
         
     }
     
@@ -79,22 +51,7 @@ public class studentGUI extends studentDatabase {
         timetableTable.setModel(DbUtils.resultSetToTableModel(rs));
     }
     
-    private ResultSet prepareQuery (String query){
-        ResultSet resultSet = null;
-        try {
-            Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
-            
-            PrepStatement = conn.prepareStatement(query);
-            PrepStatement.setString(1, Sid);
-            
-            resultSet = PrepStatement.executeQuery();
-        }
-        catch(SQLException e){
-            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
-        return resultSet;
-    }
+    
     
     private void updatePSWD(){
        String currentPSWD = new String (currentPSWDfield.getPassword());
@@ -108,9 +65,8 @@ public class studentGUI extends studentDatabase {
         
         try{
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
-            PrepStatement = conn.prepareStatement(pasdCheck);
+            PrepStatement = conn.prepareStatement(pswdCheck);
             PrepStatement.setString(1, Sid);
             
             resultSet = PrepStatement.executeQuery();
@@ -129,9 +85,6 @@ public class studentGUI extends studentDatabase {
                 System.out.println(result);
                 JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
             }
-            
-            if(connected)
-                conn.close();
             
             
         }
@@ -393,15 +346,15 @@ public class studentGUI extends studentDatabase {
     }//GEN-LAST:event_formWindowClosing
 
     private void assignmentsRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsRefreshButtonActionPerformed
-        updateAssignmentTable(prepareQuery(assignmentQuery));
+        updateAssignmentTable(prepareQuery(assignmentQuery, Sid));
     }//GEN-LAST:event_assignmentsRefreshButtonActionPerformed
 
     private void gradesRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesRefreshButtonActionPerformed
-        updateGradesTable(prepareQuery(gradesQuery));
+        updateGradesTable(prepareQuery(gradesQuery, Sid));
     }//GEN-LAST:event_gradesRefreshButtonActionPerformed
 
     private void timetableRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableRefreshButtonActionPerformed
-        updateTimetableTable(prepareQuery(timetableQuery));
+        updateTimetableTable(prepareQuery(timetableQuery, Sid));
     }//GEN-LAST:event_timetableRefreshButtonActionPerformed
 
     private void changePSWDbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePSWDbuttonActionPerformed
@@ -437,6 +390,7 @@ public class studentGUI extends studentDatabase {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new studentGUI(Sid).setVisible(true);
             }

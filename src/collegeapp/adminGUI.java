@@ -23,354 +23,12 @@ public class adminGUI extends adminDatabase {
     /**
      * Creates new form adminGUI
      */
-    private String selectStudentQuery = "SELECT student.Sid AS 'Student ID',\n" +
-                                        "	student.Fname AS 'First Name',\n" +
-                                        "        student.Lname AS 'Last Name',\n" +
-                                        "        student.Course,\n" +
-                                        "        student.Phone,\n" +
-                                        "        student.Address\n" +
-                                        "FROM student;";
     
-    private String selectAttendanceQuery = "SELECT attendance.Sid AS 'Student ID',\n" +
-                                            "		attendance.Lessons,\n" +
-                                            "		attendance.Attended\n" +
-                                            "FROM attendance;";
-    
-    private String findStudentQuery = "SELECT student.Sid AS 'Student ID',\n" +
-                                        "		student.Fname AS 'First Name',\n" +
-                                        "        student.Lname AS 'Last Name',\n" +
-                                        "        student.Course,\n" +
-                                        "        student.Phone,\n" +
-                                        "        student.Address\n" +
-                                        "FROM student\n" +
-                                        "WHERE student.Sid = ?;";
-    
-    private String deleteStudentQuery = "DELETE FROM `programming_db`.`student` WHERE `Sid`=?;";
-    
-    private String createStudentQuery = "INSERT INTO `programming_db`.`student` (`Sid`, `Fname`, `Lname`, `Course`, `Phone`, `Address`) "
-                                            + "VALUES (?, ?, ?, ?, ?, ?);";
-    
-    private String modifyStudentQuery = "UPDATE `programming_db`.`student` SET "
-                                        + "`Fname`=?, `Lname`=?,"
-                                        + " `Course`=?, `Phone`=?, "
-                                        + "`Address`=?"
-                                        + " WHERE `Sid`=?;";
-    
-    private String findAttendance = "SELECT attendance.Sid AS 'Student ID',\n" +
-                                        "		attendance.Lessons,\n" +
-                                        "		attendance.Attended\n" +
-                                        "FROM attendance\n" +
-                                        "WHERE attendance.Sid = ?;";
-    
-    private String createAttendance = "INSERT INTO `programming_db`.`attendance` (`Sid`, `Lessons`, `Attended`) "
-                                        + "VALUES (?, ?, ?);";
-    
-    private String deleteAttendance = "DELETE FROM `programming_db`.`attendance` WHERE `Sid`=?;";
-    
-    private String modifyAttendance = "UPDATE `programming_db`.`attendance` "
-                                        + "SET `Lessons`=?, `Attended`=? "
-                                        + "WHERE `Sid`=?;";
-    
-    private String selectGroupDetails = "SELECT group_details.Gid AS 'Group ID',\n" +
-                                        "		group_details.Cid AS 'Course ID',\n" +
-                                        "        group_details.Superviser AS 'Superviser ID',\n" +
-                                        "        faculty_members.Fname AS 'Superviser Name',\n" +
-                                        "        faculty_members.Lname AS 'Superviser Last Name'\n" +
-                                        "FROM (group_details\n" +
-                                        "	INNER JOIN faculty_members ON group_details.Superviser = faculty_members.Fid);";
-    
-    private String selectGroups = "SELECT groups.Gid AS 'Group ID',\n" +
-                                "		groups.Sid AS 'Student ID',\n" +
-                                "        student.Fname AS 'Student First Name',\n" +
-                                "        student.Lname AS 'Student Last Name'\n" +
-                                "FROM (groups\n" +
-                                "	INNER JOIN student ON groups.Sid = student.Sid);";
-    
-    private String createGroupDetails = "INSERT INTO `programming_db`.`group_details` (`Gid`, `Cid`, `Superviser`) VALUES (?, ?, ?);";
-    
-    private String deleteGroupDetails = "DELETE FROM `programming_db`.`group_details` WHERE `Gid`=? and`Cid`=?;";
-    
-    private String modifyGroupDetails = "UPDATE `programming_db`.`group_details` SET `Superviser`=? WHERE `Gid`=? and`Cid`=?;";
-    
-    private String createGroups = "INSERT INTO `programming_db`.`groups` (`Sid`, `Gid`) VALUES (?, ?);";
-    
-    private String deleteGroups = "DELETE FROM `programming_db`.`groups` WHERE `Sid`=? and`Gid`=?;";
-    
-    private String selectTimetable = "SELECT timetable.Gid AS 'Group ID',\n" +
-                                    "		timetable.Day,\n" +
-                                    "        timetable.Subject,\n" +
-                                    "        timetable.Start,\n" +
-                                    "        timetable.End\n" +
-                                    "FROM timetable;";
-    
-    private String timetableFill = "SELECT group_details.Gid\n" +
-                                    "FROM group_details;";
-    
-    private String timetableFill2 = "SELECT subjects.Subject\n" +
-                                    "FROM subjects;";
-    
-    private String timetableCreate = "INSERT INTO `programming_db`.`timetable` "
-                                + "(`Gid`, `Day`, `Subject`, `Start`, `End`) VALUES "
-                                + "(?, ?, ?, ?, ?);";
-    
-    private String timetableModify = "UPDATE `programming_db`.`timetable` SET "
-                                + "`Subject`=?, `Start`=?, `End`=? WHERE "
-                                + "`Gid`=? and`Day`=?;";
-    
-    private String timetableDelete = "DELETE FROM `programming_db`.`timetable` WHERE "
-                                + "`Gid`=? and`Day`=?;";
-    
-    private String coursesSelect = "SELECT courses.Cid AS 'Course ID',\n" +
-                                "		courses.Course AS 'Description',\n" +
-                                "        courses.Price\n" +
-                                "FROM courses;";
-    
-    private String coursesSelect2 = "SELECT student.Fname AS 'First Name',\n" +
-                                "		student.Lname AS 'Last Name',\n" +
-                                "        payments.Sid AS 'Student ID',\n" +
-                                "        payments.Required,\n" +
-                                "        payments.Payed\n" +
-                                "FROM (payments\n" +
-                                "	INNER JOIN student ON payments.Sid = student.Sid);";
-    
-    private String courseFind = "SELECT courses.Cid AS 'Course ID',\n" +
-                                "		courses.Course AS 'Description',\n" +
-                                "        courses.Price\n" +
-                                "FROM courses\n" +
-                                "WHERE courses.Cid = ?;";
-    
-    private String courseDelete = "DELETE FROM `programming_db`.`courses` WHERE `Cid`=?;";
-    
-    private String courseCreate = "INSERT INTO `programming_db`.`courses` "
-                                    + "(`Cid`, `Course`, `Price`) VALUES "
-                                    + "(?, ?, ?);";
-    
-    private String courseModify = "UPDATE `programming_db`.`courses` SET "
-                                    + "`Course`=?, `Price`=? WHERE `Cid`=?;";
-    
-    private String paymentFind ="SELECT  payments.Sid AS 'Student ID',\n" +
-                                "        payments.Required,\n" +
-                                "        payments.Payed\n" +
-                                "FROM (payments\n" +
-                                "	INNER JOIN student ON payments.Sid = student.Sid)\n" +
-                                "WHERE student.Sid = ?;";
-    
-    private String paymentCreate ="INSERT INTO `programming_db`.`payments` "
-                                    + "(`Sid`, `Required`, `Payed`) VALUES "
-                                    + "(?, ?, ?);";
-    
-    private String paymentDelete = "DELETE FROM `programming_db`.`payments` WHERE `Sid`=?;";
-    
-    private String paymentModify = "UPDATE `programming_db`.`payments` SET "
-                                    + "`Required`=?, `Payed`=? WHERE "
-                                    + "`Sid`=?;";
-    
-    private String branchSelect = "SELECT branch_details.Bid AS 'Branch ID',\n" +
-                                "		branch_details.Bname AS 'Branch Name',\n" +
-                                "        branch_details.Baddress AS 'Address'\n" +
-                                "FROM branch_details;";
-    
-    private String branchSelect2 = "SELECT branches.Bid AS 'Branch ID',\n" +
-                                "		branches.Courses AS 'Course ID',\n" +
-                                "        courses.Course AS 'Course'\n" +
-                                "FROM (branches\n" +
-                                "	INNER JOIN courses ON branches.Courses = courses.Cid);";
-    
-    private String branchFill = "SELECT branch_details.Bid\n" +
-                                "FROM branch_details;";
-    
-    private String branchFill2 = "SELECT courses.Cid\n" +
-                                "FROM courses;";
-    
-    private String branchFind = "SELECT branch_details.Bid AS 'Branch ID',\n" +
-                                "		branch_details.Bname AS 'Branch Name',\n" +
-                                "        branch_details.Baddress AS 'Address'\n" +
-                                "FROM branch_details\n" +
-                                "WHERE branch_details.Bid = ?;";
-    
-    private String branchCreate = "INSERT INTO `programming_db`.`branch_details` "
-                                    + "(`Bid`, `Bname`, `Baddress`) VALUES "
-                                    + "(?, ?, ?);";
-    
-    private String branchDelete = "DELETE FROM `programming_db`.`branch_details`"
-                                    + " WHERE `Bid`=?;";
-
-    private String branchModify = "UPDATE `programming_db`.`branch_details` SET "
-                                + "`Bname`=?, `Baddress`=? "
-                                + "WHERE `Bid`=?;";
-
-    private String branchCreate2 = "INSERT INTO `programming_db`.`branches` "
-                                    + "(`Bid`, `Courses`) VALUES "
-                                    + "(?, ?);";
-
-    private String branchDelete2 = "DELETE FROM `programming_db`.`branches` WHERE "
-                                    + "`Courses`=? and`Bid`=?;";
-    
-    private String gradesSelect = "SELECT grades.Sid AS 'Student ID',\n" +
-                                    "		student.Fname AS 'First Name',\n" +
-                                    "        student.Lname AS 'Last Name',\n" +
-                                    "        grades.SBid AS 'Subject ID',\n" +
-                                    "        subjects.Subject AS 'Subject',\n" +
-                                    "        grades.Grade,\n" +
-                                    "        grades.ExamGrade AS 'Exam Grade'\n" +
-                                    "FROM ((grades\n" +
-                                    "	INNER JOIN student ON grades.Sid = student.Sid)\n" +
-                                    "    INNER JOIN subjects ON grades.SBid = subjects.SBid);";
-    
-    
-    private String gradesSelect2 = "SELECT 	assignment_grades.Aid AS 'Assignment ID',\n" +
-                                    "		assignment_grades.Sid AS 'Student ID',\n" +
-                                    "		student.Fname AS 'First Name',\n" +
-                                    "        student.Lname AS 'Last Name',\n" +
-                                    "		assignment_grades.Grade\n" +
-                                    "FROM (assignment_grades\n" +
-                                    "	INNER JOIN student ON assignment_grades.Sid = student.Sid);";
-    
-    private String getStudentID = "SELECT student.Sid\n" +
-                                    "FROM student\n" +
-                                    "ORDER BY student.Sid;";
-    
-    private String getSubjectID = "SELECT subjects.SBid\n" +
-                                    "FROM subjects;";
-
-    private String getAssignmentID = "SELECT assignments.Aid\n" +
-                                        "FROM assignments;";
-    
-    private String gradesFind = "SELECT grades.Grade,\n" +
-                                "		grades.ExamGrade\n" +
-                                "FROM grades\n" +
-                                "WHERE grades.Sid = ? AND grades.SBid = ?";
-    
-    private String gradesCreate = "INSERT INTO `programming_db`.`grades` "
-                                    + "(`Sid`, `SBid`, `Grade`, `ExamGrade`) VALUES "
-                                    + "(?, ?, ?, ?);";
-    
-    private String gradesDelete = "DELETE FROM `programming_db`.`grades` WHERE "
-                                + "`Sid`=? and`SBid`=?;";
-    
-    private String  gradesModify = "UPDATE `programming_db`.`grades` SET "
-                                + "`Grade`=?, `ExamGrade`=? WHERE "
-                                + "`Sid`=? and`SBid`=?;";
-    
-    private String assignmentGradesCreate = "INSERT INTO `programming_db`.`assignment_grades` "
-                                            + "(`Aid`, `Sid`, `Grade`) VALUES "
-                                            + "(?, ?, ?);";
-    
-    private String assignmentGradesFind = "SELECT assignment_grades.Grade\n" +
-                                            "FROM assignment_grades\n" +
-                                            "WHERE assignment_grades.Aid = ? AND assignment_grades.Sid = ?;";
-    
-    private String assignmentGradesDelete = "DELETE FROM `programming_db`.`assignment_grades` WHERE "
-                                            + "`Aid`=? and`Sid`=?;";
-    
-    private String assignmentGradesModify = "UPDATE `programming_db`.`assignment_grades` SET "
-                                            + "`Grade`=? WHERE "
-                                            + "`Aid`=? and`Sid`=?;";
-    
-    private String assignmentSelect = "SELECT 	assignments.Cid AS 'Course ID',\n" +
-                                    "		courses.Course,\n" +
-                                    "        assignments.Aid,\n" +
-                                    "        assignments.Subject AS 'Subject ID',\n" +
-                                    "        subjects.Subject,\n" +
-                                    "        assignments.DueDate AS 'Due Date',\n" +
-                                    "        assignments.Visible\n" +
-                                    "FROM ((assignments\n" +
-                                    "	INNER JOIN courses ON assignments.Cid = courses.Cid)\n" +
-                                    "    INNER JOIN subjects ON assignments.Subject = subjects.SBid);";
-    
-    private String getCourseID = "SELECT courses.Cid\n" +
-                                    "FROM courses;";
-    
-    private String assignmentCreate = "INSERT INTO `programming_db`.`assignments` "
-                                    + "(`Cid`, `Aid`, `Subject`, `Visible`, `DueDate`) VALUES "
-                                    + "(?, ?, ?, ?, ?);";
-    
-    private String assignmentDelete = "DELETE FROM `programming_db`.`assignments` WHERE "
-                                    + "`Aid`=?;";
-    
-    private String assignmentModify = "UPDATE `programming_db`.`assignments` SET "
-                                    + "`Cid`=?, `Subject`=?, `Visible`=?, `DueDate`=? WHERE "
-                                    + "`Aid`=?;";
-    
-    private String assignmentFind = "SELECT 	assignments.Cid,\n" +
-                                    "		assignments.Aid,\n" +
-                                    "        assignments.Subject,\n" +
-                                    "        assignments.Visible,\n" +
-                                    "        assignments.DueDate\n" +
-                                    "FROM assignments\n" +
-                                    "WHERE assignments.Aid = ?;";
-    
-    private String facultyMembersSelect = "SELECT faculty_members.Fid AS 'Faculty ID',\n" +
-                                        "           faculty_members.Fname AS 'First Name',\n" +
-                                        "           faculty_members.Lname AS 'Last Name'\n" +
-                                        "FROM faculty_members;";
-    
-    private String subjectsSelect = "SELECT  subjects.SBid AS 'Subject ID',\n" +
-                                    "        subjects.Lecturer AS 'Lecturer ID',\n" +
-                                    "        faculty_members.Fname AS 'Lecturer First Name',\n" +
-                                    "        faculty_members.Lname AS 'Lecturer Last Name',\n" +
-                                    "        subjects.Subject AS 'Subject Name'\n" +
-                                    "FROM (subjects\n" +
-                                    "	INNER JOIN faculty_members ON subjects.Lecturer = faculty_members.Fid);";
-    
-    private String getFacultyID = "SELECT faculty_members.Fid\n" +
-                                    "FROM faculty_members;";
-    
-    private String facultyFindButton1 = "SELECT  faculty_members.Fid AS 'Faculty ID',\n" +
-                                        "	 faculty_members.Fname AS 'First Name',\n" +
-                                        "        faculty_members.Lname AS 'Last Name'\n" +
-                                        "FROM faculty_members\n" +
-                                        "WHERE faculty_members.Fid = ?;";
-    
-    private String facultyCreateButton1 = "INSERT INTO `programming_db`.`faculty_members` "
-                                            + "(`Fid`, `Fname`, `Lname`) VALUES "
-                                            + "(?,?, ?);";
-    
-    private String facultyDeleteButton1 = "DELETE FROM `programming_db`.`faculty_members` WHERE"
-                                        + " `Fid`=?;";
-    
-    private String facultyModifyButton1 = "UPDATE `programming_db`.`faculty_members` SET "
-                                        + "`Fname`=?, `Lname`=? WHERE "
-                                        + "`Fid`=?;";
-    
-    private String subjectsFind = "SELECT * FROM subjects\n" +
-                                    "WHERE subjects.SBid = ?;";
-    
-    private String subjectsCreate = "INSERT INTO `programming_db`.`subjects` "
-                                    + "(`SBid`, `Lecturer`, `Subject`) VALUES "
-                                    + "(?, ?, ?);";
-    
-    private String subjectsDelete = "DELETE FROM `programming_db`.`subjects` WHERE "
-                                    + "`SBid`=?;";
-    
-    private String subjectsModify = "UPDATE `programming_db`.`subjects` SET "
-                                    + "`Lecturer`=?, `Subject`=? WHERE "
-                                    + "`SBid`=?;";
-    
-    private String loginSelect = "SELECT  login.Username,\n" +
-                                "		login.Password,\n" +
-                                "		login.Role\n" +
-                                "FROM login;";
-    
-    private String loginCreate = "INSERT INTO `programming_db`.`login` "
-                                + "(`Username`, `Password`, `Role`) VALUES "
-                                + "(?, 'panadol', ?);";
-    
-    private String loginDelete = "DELETE FROM `programming_db`.`login` WHERE "
-                                + "`Username`=?;";
-    
-    private String loginModify = "UPDATE `programming_db`.`login` SET "
-                                + "`Role`=? WHERE "
-                                + "`Username`=?;";
-    
-    private String loginReset = "UPDATE `programming_db`.`login` SET "
-                                + "`Password`='panadol' WHERE "
-                                + "`Username`=?;";
-   
-
     public adminGUI() {
         initComponents();
+        openFile();
         readConnectionDetails();
+        closeFile();
         
         updateStudentStudentTable(selectQuery(selectStudentQuery));
         updateStudentAttendanceTable(selectQuery(selectAttendanceQuery));
@@ -463,7 +121,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(loginReset);
             PrepStatement.setString(1, loginUsernameFiled.getText());
@@ -481,7 +138,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(loginModify);
             PrepStatement.setString(2, loginUsernameFiled.getText());
@@ -500,7 +156,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(loginDelete);
             PrepStatement.setString(1, loginUsernameFiled.getText());
@@ -518,7 +173,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(loginCreate);
             PrepStatement.setString(1, loginUsernameFiled.getText());
@@ -554,7 +208,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(subjectsModify);
             PrepStatement.setString(3, facultySBIDfield.getText());
@@ -574,7 +227,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(subjectsDelete);
             PrepStatement.setString(1, facultySBIDfield.getText());
@@ -592,7 +244,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(subjectsCreate);
             PrepStatement.setString(1, facultySBIDfield.getText());
@@ -610,7 +261,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(subjectsFind);
             PrepStatement.setString(1, facultySBIDfield.getText());
@@ -634,7 +284,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(facultyModifyButton1);
             PrepStatement.setString(3, facultyIdField.getText());
@@ -654,7 +303,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(facultyDeleteButton1);
             PrepStatement.setString(1, facultyIdField.getText());
@@ -672,7 +320,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(facultyCreateButton1);
             PrepStatement.setString(1, facultyIdField.getText());
@@ -690,7 +337,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(facultyFindButton1);
             PrepStatement.setString(1, facultyIdField.getText());
@@ -732,7 +378,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentModify);
             PrepStatement.setString(1, assignmentCourseCombo.getSelectedItem().toString());
@@ -753,7 +398,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentDelete);
             PrepStatement.setString(1, assignmentField.getText());
@@ -774,7 +418,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentCreate);
             PrepStatement.setString(1, assignmentCourseCombo.getSelectedItem().toString());
@@ -794,7 +437,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentFind);
             PrepStatement.setString(1, assignmentField.getText());
@@ -841,7 +483,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(gradesCreate);
             PrepStatement.setString(1, studentCombo1.getSelectedItem().toString());
@@ -861,7 +502,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(gradesDelete);
             PrepStatement.setString(1, studentCombo1.getSelectedItem().toString());
@@ -878,7 +518,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(gradesFind);
             PrepStatement.setString(1, studentCombo1.getSelectedItem().toString());
@@ -901,7 +540,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(gradesModify);
             PrepStatement.setString(1, gradeField1.getText());
@@ -920,7 +558,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentGradesFind);
             PrepStatement.setString(1, assignmentCombo2.getSelectedItem().toString());
@@ -942,7 +579,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentGradesCreate);
             PrepStatement.setString(1, assignmentCombo2.getSelectedItem().toString());
@@ -962,7 +598,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentGradesDelete);
             PrepStatement.setString(1, assignmentCombo2.getSelectedItem().toString());
@@ -981,7 +616,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(assignmentGradesModify);
             PrepStatement.setString(2, assignmentCombo2.getSelectedItem().toString());
@@ -1051,7 +685,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchCreate);
             PrepStatement.setString(1, branchIDField.getText());
@@ -1070,7 +703,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchDelete);
             PrepStatement.setString(1, branchIDField.getText());
@@ -1086,7 +718,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchFind);
             PrepStatement.setString(1, branchIDField.getText());
@@ -1109,7 +740,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchModify);
             PrepStatement.setString(3, branchIDField.getText());
@@ -1128,7 +758,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchCreate2);
             PrepStatement.setString(1, branchIdCombo.getSelectedItem().toString());
@@ -1146,7 +775,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(branchDelete2);
             PrepStatement.setString(1, courseIdCombo.getSelectedItem().toString());
@@ -1163,7 +791,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(paymentFind);
             PrepStatement.setString(1, coursesStidentIdField.getText());
@@ -1186,7 +813,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(paymentModify);
             PrepStatement.setString(3, coursesStidentIdField.getText());
@@ -1205,7 +831,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(paymentDelete);
             PrepStatement.setString(1, coursesStidentIdField.getText());
@@ -1222,7 +847,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(paymentCreate);
             PrepStatement.setString(1, coursesStidentIdField.getText());
@@ -1243,7 +867,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(courseModify);
             PrepStatement.setString(3, courseIdField.getText());
@@ -1261,7 +884,6 @@ public class adminGUI extends adminDatabase {
         ResultSet resultSet = null;        
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(courseFind);
             PrepStatement.setString(1, courseIdField.getText());
@@ -1284,7 +906,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(courseDelete);
             PrepStatement.setString(1, courseIdField.getText());
@@ -1301,7 +922,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(courseCreate);
             PrepStatement.setString(1, courseIdField.getText());
@@ -1327,7 +947,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(timetableCreate);
             PrepStatement.setString(1, timetableGroupCombo.getSelectedItem().toString());
@@ -1353,7 +972,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(timetableModify);
             PrepStatement.setString(4, timetableGroupCombo.getSelectedItem().toString());
@@ -1374,7 +992,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(timetableDelete);
             PrepStatement.setString(1, timetableGroupCombo.getSelectedItem().toString());
@@ -1412,7 +1029,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(createGroupDetails);
             PrepStatement.setString(1, groupField1.getText());
@@ -1432,7 +1048,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(deleteGroupDetails);
             PrepStatement.setString(1, groupField1.getText());
@@ -1451,7 +1066,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyGroupDetails);
             PrepStatement.setString(2, groupField1.getText());
@@ -1471,7 +1085,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(createGroups);
             PrepStatement.setString(1, groupField5.getText());
@@ -1490,7 +1103,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(deleteGroups);
             PrepStatement.setString(1, groupField5.getText());
@@ -1511,7 +1123,6 @@ public class adminGUI extends adminDatabase {
         
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(query);
             
@@ -1529,7 +1140,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(directTextArea.getText());
             
@@ -1548,7 +1158,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyAttendance);
             
@@ -1569,7 +1178,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(deleteAttendance);
             
@@ -1588,7 +1196,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(createAttendance);
             
@@ -1608,7 +1215,6 @@ public class adminGUI extends adminDatabase {
         
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(findAttendance);
             PrepStatement.setString(1,sid);
@@ -1634,7 +1240,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(modifyStudentQuery);
             
@@ -1658,7 +1263,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(createStudentQuery);
             
@@ -1682,7 +1286,6 @@ public class adminGUI extends adminDatabase {
         try {
             
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(deleteStudentQuery);
             
@@ -1700,7 +1303,6 @@ public class adminGUI extends adminDatabase {
         
         try {
             Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
             
             PrepStatement = conn.prepareStatement(findStudentQuery);
             PrepStatement.setString(1,sid);
@@ -1720,28 +1322,6 @@ public class adminGUI extends adminDatabase {
             JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    
-    
-    private ResultSet selectQuery(String query){
-        ResultSet resultSet = null;
-        
-        try {
-            Connection conn = DriverManager.getConnection(connectionDetails);
-            connected = true;
-            
-            PrepStatement = conn.prepareStatement(query);
-            
-            resultSet = PrepStatement.executeQuery();
-        }
-        catch(SQLException e){
-            JOptionPane.showMessageDialog(this , e, "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
-        
-        
-        return resultSet;
-    }
-
     
 
     /**
@@ -4169,6 +3749,7 @@ public class adminGUI extends adminDatabase {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new adminGUI().setVisible(true);
             }

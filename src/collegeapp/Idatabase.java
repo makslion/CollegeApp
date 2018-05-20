@@ -12,4 +12,7 @@ package collegeapp;
  */
 public interface Idatabase  {
     
+    void openFile();
+    void readConnectionDetails();
+    void closeFile();
 }
