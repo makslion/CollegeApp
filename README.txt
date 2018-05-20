@@ -9,3 +9,4 @@ Versions:
 - 0.1 Basic GUI
 - 0.2 Implemented "Student" and "Faculty" 
 - 0.3 Fixed Majority of bugs and implemented part of "Admin"
+- 0.4 Implemented all required features. Complete working solution. 
