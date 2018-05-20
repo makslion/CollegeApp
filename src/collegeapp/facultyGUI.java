@@ -108,6 +108,14 @@ public class facultyGUI extends facultyDatabase {
     
     private String modifyStudentQuery = "UPDATE `programming_db`.`assignment_grades` SET `Grade`=? WHERE `Aid`=? and`Sid`=?;";
     
+    private String pswdCheck = "SELECT login.Password\n" +
+                                "FROM login\n" +
+                                "WHERE login.Username = ?;";
+    
+    private String pswdQuery = "UPDATE `programming_db`.`login` SET "
+                            + "`Password`=? "
+                            + "WHERE `Username`=?;";
+    
     
     public facultyGUI(String fid) {
         initComponents();
@@ -122,6 +130,51 @@ public class facultyGUI extends facultyDatabase {
         assignmentFill();
         studentFill();
         
+        
+    }
+    
+    private void updatePSWD(){
+       String currentPSWD = new String (accountOldPasswordField.getPassword());
+        char [] newPSWD = accountNewPasswordField.getPassword();
+        char [] newPSWD1 = accountNewPasswordField2.getPassword();
+        ResultSet resultSet = null;
+        
+        if(!java.util.Arrays.equals(newPSWD,newPSWD1))
+            JOptionPane.showMessageDialog(this, "Password not equal","Oops",JOptionPane.WARNING_MESSAGE);
+        
+        
+        try{
+            Connection conn = DriverManager.getConnection(connectionDetails);
+            connected = true;
+            
+            PrepStatement = conn.prepareStatement(pswdCheck);
+            PrepStatement.setString(1, Fid);
+            
+            resultSet = PrepStatement.executeQuery();
+            
+            resultSet.next();
+            if(!resultSet.getString("Password").equals(currentPSWD)){
+                JOptionPane.showMessageDialog(this, "Wrong Password","Oops",JOptionPane.WARNING_MESSAGE);
+            }
+            else {
+                PrepStatement = conn.prepareStatement(pswdQuery);
+                
+                PrepStatement.setString(1, new String (newPSWD));
+                PrepStatement.setString(2, Fid);
+                
+                int result = PrepStatement.executeUpdate();
+                System.out.println(result);
+                JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+            if(connected)
+                conn.close();
+            
+            
+        }
+        catch(SQLException e){
+            JOptionPane.showMessageDialog(this, e,"Ooops",JOptionPane.ERROR_MESSAGE);
+        }
         
     }
     
@@ -216,7 +269,7 @@ public class facultyGUI extends facultyDatabase {
     
     private void modify(String aid){
         Date date = datePicker2.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String formatedDate = sdf.format(date);
         
         try {
@@ -297,7 +350,7 @@ public class facultyGUI extends facultyDatabase {
     private void createAssignment(){
         ResultSet resultSet = null;
         Date date = datePicker1.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String formatedDate = sdf.format(date);
         
         try {
@@ -441,6 +494,15 @@ public class facultyGUI extends facultyDatabase {
         studentStudentCombo = new javax.swing.JComboBox<>();
         studentGradeField = new javax.swing.JTextField();
         studentApplyButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        accountLabel1 = new javax.swing.JLabel();
+        accountLabel2 = new javax.swing.JLabel();
+        accountLabel3 = new javax.swing.JLabel();
+        accountLabel4 = new javax.swing.JLabel();
+        accountNewPasswordField = new javax.swing.JPasswordField();
+        accountNewPasswordField2 = new javax.swing.JPasswordField();
+        accountButton = new javax.swing.JButton();
+        accountOldPasswordField = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Faculty");
@@ -890,11 +952,77 @@ public class facultyGUI extends facultyDatabase {
 
         jTabbedPane1.addTab("Student", studentPanel);
 
+        accountLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        accountLabel1.setText("Password Change");
+
+        accountLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        accountLabel2.setText("Current Password:");
+
+        accountLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        accountLabel3.setText("New Password:");
+
+        accountLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        accountLabel4.setText("Repeat New Password:");
+
+        accountButton.setText("Change");
+        accountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(254, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(accountLabel3)
+                    .addComponent(accountLabel4)
+                    .addComponent(accountLabel2))
+                .addGap(136, 136, 136)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(accountNewPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(accountOldPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(accountNewPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(265, 265, 265))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(391, 391, 391)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(accountLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(accountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(accountLabel1)
+                .addGap(58, 58, 58)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(accountLabel2)
+                    .addComponent(accountOldPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(accountLabel3)
+                    .addComponent(accountNewPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(53, 53, 53)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(accountLabel4)
+                    .addComponent(accountNewPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(accountButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(144, 144, 144))
+        );
+
+        jTabbedPane1.addTab("Accound", jPanel1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 955, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -958,6 +1086,10 @@ public class facultyGUI extends facultyDatabase {
         updateStudentGradesTable(prepareQuery(studentGradeQuery));
     }//GEN-LAST:event_studentApplyButtonActionPerformed
 
+    private void accountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountButtonActionPerformed
+        updatePSWD();
+    }//GEN-LAST:event_accountButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -994,6 +1126,14 @@ public class facultyGUI extends facultyDatabase {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton accountButton;
+    private javax.swing.JLabel accountLabel1;
+    private javax.swing.JLabel accountLabel2;
+    private javax.swing.JLabel accountLabel3;
+    private javax.swing.JLabel accountLabel4;
+    private javax.swing.JPasswordField accountNewPasswordField;
+    private javax.swing.JPasswordField accountNewPasswordField2;
+    private javax.swing.JPasswordField accountOldPasswordField;
     private javax.swing.JComboBox<String> assignmentComboBox;
     private javax.swing.JTextField assignmentField;
     private javax.swing.JLabel assignmentGradesLabel;
@@ -1016,6 +1156,7 @@ public class facultyGUI extends facultyDatabase {
     private javax.swing.JLabel dueDateLabel1;
     private javax.swing.JLabel dueDateLabel2;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
