@@ -5,6 +5,7 @@
  */
 package collegeapp;
 
+import java.awt.Color;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +17,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -28,8 +32,13 @@ public abstract class studentDatabase extends javax.swing.JFrame implements Idat
     protected String connectionDetails;
     protected static ObjectInputStream input;
     
+    int xMouse;
+    int yMouse;
+    
     
     protected static String Sid;
+    
+    protected String pattern = "{8,45}[a-z|A-Z]+[0-9]+";
     
     protected String assignmentQuery = "SELECT assignments.Aid AS 'Assignment',\n" +
                                     "        subjects.Subject,\n" +
@@ -63,6 +72,18 @@ public abstract class studentDatabase extends javax.swing.JFrame implements Idat
     
     }
     
+    protected final void designTable(JTable t, JScrollPane s){
+        s.setOpaque(false);
+        s.getViewport().setOpaque(false);
+        //s.setBorder(null);
+        t.setOpaque(false);
+        
+        
+        JTableHeader header =  t.getTableHeader();
+        
+        header.setBackground(new Color(255,255,255));
+        header.setForeground(new Color (0,0,0));
+    }
     
     
     

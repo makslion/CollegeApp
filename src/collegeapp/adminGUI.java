@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.EmptyStackException;
 import javax.swing.JOptionPane;
 import net.proteanit.sql.DbUtils;
 
@@ -113,7 +114,24 @@ public class adminGUI extends adminDatabase {
         hidePassword();
     }
     
+    private void stackPush(){
+        st.push(directTextArea.getText());
+    }
     
+    private void stackPop(){
+        String pop;
+        try {
+            pop = st.pop().toString();
+            
+            if (pop.equalsIgnoreCase(directTextArea.getText()))
+                pop = st.pop().toString();
+            
+            directTextArea.setText(pop);
+            
+      } catch (EmptyStackException e) {
+         JOptionPane.showMessageDialog(this, e, "ERROR", JOptionPane.ERROR_MESSAGE);
+      }
+    }
     
     private void loginReset(){
         ResultSet resultSet = null;
@@ -1562,9 +1580,11 @@ public class adminGUI extends adminDatabase {
         directTextArea = new javax.swing.JTextArea();
         directExecuteButton = new javax.swing.JButton();
         directExecuteUpdateButton = new javax.swing.JButton();
+        directPrevButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Admin");
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -3378,22 +3398,28 @@ public class adminGUI extends adminDatabase {
             }
         });
 
+        directPrevButton.setText("Prev. Query");
+        directPrevButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                directPrevButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout DirectDBaccessLayout = new javax.swing.GroupLayout(DirectDBaccess);
         DirectDBaccess.setLayout(DirectDBaccessLayout);
         DirectDBaccessLayout.setHorizontalGroup(
             DirectDBaccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(DirectDBaccessLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(DirectDBaccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5)
                     .addGroup(DirectDBaccessLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(DirectDBaccessLayout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(directExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, Short.MAX_VALUE)
-                        .addComponent(directExecuteUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)))
+                        .addComponent(directExecuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(directPrevButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                        .addComponent(directExecuteUpdateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 732, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, DirectDBaccessLayout.createSequentialGroup()
@@ -3416,9 +3442,11 @@ public class adminGUI extends adminDatabase {
                     .addGroup(DirectDBaccessLayout.createSequentialGroup()
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(DirectDBaccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(directExecuteUpdateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(directExecuteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGroup(DirectDBaccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(directExecuteUpdateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                            .addComponent(directPrevButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(directExecuteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -3483,11 +3511,13 @@ public class adminGUI extends adminDatabase {
 
     private void directExecuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directExecuteButtonActionPerformed
         updateDirectTable(directExecute(directTextArea.getText()));
+        stackPush();
     }//GEN-LAST:event_directExecuteButtonActionPerformed
 
     private void directExecuteUpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directExecuteUpdateButtonActionPerformed
         directExecuteUpdate();
         updateDirectTable(directExecute(directQuery));
+        stackPush();
     }//GEN-LAST:event_directExecuteUpdateButtonActionPerformed
 
     private void groupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupButtonActionPerformed
@@ -3720,6 +3750,10 @@ public class adminGUI extends adminDatabase {
         updateLoginTable(selectQuery(loginSelect));
     }//GEN-LAST:event_loginResetButtonActionPerformed
 
+    private void directPrevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directPrevButtonActionPerformed
+        stackPop();
+    }//GEN-LAST:event_directPrevButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -3836,6 +3870,7 @@ public class adminGUI extends adminDatabase {
     private javax.swing.JButton directExecuteUpdateButton;
     private javax.swing.JLabel directInputLabel;
     private javax.swing.JLabel directOutputLabel;
+    private javax.swing.JButton directPrevButton;
     private javax.swing.JTable directTable;
     private javax.swing.JTextArea directTextArea;
     private javax.swing.JTextField examGradeField1;

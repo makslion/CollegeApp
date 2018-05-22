@@ -28,7 +28,7 @@ public class CollegeAPP {
     
     // defaukt db values
     String DBurl = "jdbc:mysql://localhost:3306/";
-    String DBname = "programming_db";
+    String DBname = "maksym_vavilov_16856_provisional_project";
     String DBuser = "root";
     String DBpassword = "panadol95";
     String db = DBurl+DBname+"?useSSL=false&user="+DBuser+"&password="+DBpassword;

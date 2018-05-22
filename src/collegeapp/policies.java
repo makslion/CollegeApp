@@ -39,21 +39,33 @@ public class policies extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Legal stuff ");
         setAlwaysOnTop(true);
+        setLocationByPlatform(true);
         setName("policiesFrame"); // NOI18N
+        setUndecorated(true);
         setResizable(false);
+
+        policiesPanel.setBackground(new java.awt.Color(255, 255, 255));
+        policiesPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
         textArea.setEditable(false);
         textArea.setColumns(20);
-        textArea.setFont(new java.awt.Font("Monospaced", 0, 18)); // NOI18N
+        textArea.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        textArea.setForeground(new java.awt.Color(102, 102, 102));
         textArea.setLineWrap(true);
         textArea.setRows(5);
         textArea.setText("    By pressing \"Accept\" you \ndeclare, that you accept \npolicies \nof usage for this application. \n    You also declare, that for \nthat for this assignment I will be granted the highest mark \nbecause myprogramm is excelent \nand face all requirments.\n\nSincerely Yours,\nMaksym Vavilov ");
+        textArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
         jScrollPane1.setViewportView(textArea);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Comic Sans MS", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
         jLabel1.setText("License Agreement");
 
+        acceptButton.setBackground(new java.awt.Color(102, 102, 102));
+        acceptButton.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
+        acceptButton.setForeground(new java.awt.Color(255, 255, 255));
         acceptButton.setText("Accept");
+        acceptButton.setBorder(null);
         acceptButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         acceptButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -61,7 +73,11 @@ public class policies extends javax.swing.JFrame {
             }
         });
 
+        declineButton.setBackground(new java.awt.Color(102, 102, 102));
+        declineButton.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
+        declineButton.setForeground(new java.awt.Color(255, 255, 255));
         declineButton.setText("Decline");
+        declineButton.setBorder(null);
         declineButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 declineButtonActionPerformed(evt);
@@ -72,19 +88,20 @@ public class policies extends javax.swing.JFrame {
         policiesPanel.setLayout(policiesPanelLayout);
         policiesPanelLayout.setHorizontalGroup(
             policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, policiesPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(111, 111, 111))
             .addGroup(policiesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1)
+                .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(policiesPanelLayout.createSequentialGroup()
-                        .addComponent(acceptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(declineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane1)
+                            .addGroup(policiesPanelLayout.createSequentialGroup()
+                                .addComponent(acceptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(declineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(policiesPanelLayout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addComponent(jLabel1)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         policiesPanelLayout.setVerticalGroup(
             policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,10 +110,11 @@ public class policies extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(declineButton, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
-                    .addComponent(acceptButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(policiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(acceptButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(declineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -107,9 +125,7 @@ public class policies extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(policiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 20, Short.MAX_VALUE))
+            .addComponent(policiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();

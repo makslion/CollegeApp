@@ -37,7 +37,12 @@ public class studentGUI extends studentDatabase {
         
         updateTimetableTable(prepareQuery(timetableQuery, Sid));
         
+        designTable(assignmentsTable,assignmentScrollPane);
+        designTable(gradesTable,gradesScrollPane);
+        designTable(timetableTable,timetableScrollPane);
     }
+    
+    
     
     private void updateAssignmentTable(ResultSet rs){
         assignmentsTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -57,41 +62,40 @@ public class studentGUI extends studentDatabase {
        String currentPSWD = new String (currentPSWDfield.getPassword());
         char [] newPSWD = newPSWDfield.getPassword();
         char [] newPSWD1 = newPSWDfield.getPassword();
+        String newPassword = new String (newPSWD);
         ResultSet resultSet = null;
         
         if(!java.util.Arrays.equals(newPSWD,newPSWD1))
             JOptionPane.showMessageDialog(this, "Password not equal","Oops",JOptionPane.WARNING_MESSAGE);
-        
-        
-        try{
-            Connection conn = DriverManager.getConnection(connectionDetails);
-            
-            PrepStatement = conn.prepareStatement(pswdCheck);
-            PrepStatement.setString(1, Sid);
-            
-            resultSet = PrepStatement.executeQuery();
-            
-            resultSet.next();
-            if(!resultSet.getString("Password").equals(currentPSWD)){
-                JOptionPane.showMessageDialog(this, "Wrong Password","Oops",JOptionPane.WARNING_MESSAGE);
+        else if (!newPassword.matches(pattern))
+            JOptionPane.showMessageDialog(this, "Invalid New Password","Oops",JOptionPane.WARNING_MESSAGE);
+        else{
+            try{
+                Connection conn = DriverManager.getConnection(connectionDetails);
+
+                PrepStatement = conn.prepareStatement(pswdCheck);
+                PrepStatement.setString(1, Sid);
+
+                resultSet = PrepStatement.executeQuery();
+
+                resultSet.next();
+                if(!resultSet.getString("Password").equals(currentPSWD))
+                    JOptionPane.showMessageDialog(this, "Wrong Password","Oops",JOptionPane.WARNING_MESSAGE);
+                else {
+                    PrepStatement = conn.prepareStatement(pswdQuery);
+
+                    PrepStatement.setString(1, newPassword);
+                    PrepStatement.setString(2, Sid);
+
+                    int result = PrepStatement.executeUpdate();
+                    System.out.println(result);
+                    JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-            else {
-                PrepStatement = conn.prepareStatement(pswdQuery);
-                
-                PrepStatement.setString(1, new String (newPSWD));
-                PrepStatement.setString(2, Sid);
-                
-                int result = PrepStatement.executeUpdate();
-                System.out.println(result);
-                JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
+            catch(SQLException e){
+                JOptionPane.showMessageDialog(this, e,"Ooops",JOptionPane.ERROR_MESSAGE);
             }
-            
-            
         }
-        catch(SQLException e){
-            JOptionPane.showMessageDialog(this, e,"Ooops",JOptionPane.ERROR_MESSAGE);
-        }
-        
     }
     
     
@@ -106,19 +110,36 @@ public class studentGUI extends studentDatabase {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tabbedPane = new javax.swing.JTabbedPane();
         assignmentsPanel = new javax.swing.JPanel();
         assignmentsRefreshButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        assignmentScrollPane = new javax.swing.JScrollPane();
         assignmentsTable = new javax.swing.JTable();
+        assignmentsButton = new javax.swing.JButton();
+        assignmentGradesButton = new javax.swing.JButton();
+        assignmentsTimetableButton = new javax.swing.JButton();
+        assignmentsAcountButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        tab1logout = new javax.swing.JButton();
         gradesPanel = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        gradesScrollPane = new javax.swing.JScrollPane();
         gradesTable = new javax.swing.JTable();
         gradesRefreshButton = new javax.swing.JButton();
+        gradesAssignmentButton = new javax.swing.JButton();
+        gradesButton = new javax.swing.JButton();
+        gradesTimetableButton = new javax.swing.JButton();
+        gradesAccountButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        tab2ogout = new javax.swing.JButton();
         timetablePanel = new javax.swing.JPanel();
         timetableRefreshButton = new javax.swing.JButton();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        timetableScrollPane = new javax.swing.JScrollPane();
         timetableTable = new javax.swing.JTable();
+        timetableAssignmentButton = new javax.swing.JButton();
+        timetableGradesButton = new javax.swing.JButton();
+        timetableButton = new javax.swing.JButton();
+        timetableAccountButton = new javax.swing.JButton();
+        tab3Logout = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
         acountPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         currentPSWDlabel = new javax.swing.JLabel();
@@ -128,22 +149,69 @@ public class studentGUI extends studentDatabase {
         newPSWDfield = new javax.swing.JPasswordField();
         newPSWDfield1 = new javax.swing.JPasswordField();
         changePSWDbutton = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        accountTextArea = new javax.swing.JTextArea();
+        accountAssignmentsButton = new javax.swing.JButton();
+        accountGradesButton = new javax.swing.JButton();
+        accountTimetableButton = new javax.swing.JButton();
+        accountButton = new javax.swing.JButton();
+        tab4Logout = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jSeparator3 = new javax.swing.JSeparator();
+        jPanel4 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Student");
+        setBackground(new java.awt.Color(51, 51, 51));
+        setLocationByPlatform(true);
+        setMinimumSize(new java.awt.Dimension(520, 634));
+        setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(477, 634));
+        setResizable(false);
+        addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                formMouseDragged(evt);
+            }
+        });
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                formMousePressed(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
+        getContentPane().setLayout(new java.awt.CardLayout());
 
+        assignmentsPanel.setBackground(new java.awt.Color(255, 255, 255));
+        assignmentsPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 3));
+        assignmentsPanel.setForeground(new java.awt.Color(204, 204, 204));
+        assignmentsPanel.setMinimumSize(new java.awt.Dimension(520, 634));
+        assignmentsPanel.setPreferredSize(new java.awt.Dimension(514, 634));
+        assignmentsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        assignmentsRefreshButton.setBackground(new java.awt.Color(102, 102, 102));
+        assignmentsRefreshButton.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        assignmentsRefreshButton.setForeground(new java.awt.Color(255, 255, 255));
         assignmentsRefreshButton.setText("Refresh");
+        assignmentsRefreshButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        assignmentsRefreshButton.setFocusPainted(false);
         assignmentsRefreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 assignmentsRefreshButtonActionPerformed(evt);
             }
         });
+        assignmentsPanel.add(assignmentsRefreshButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 550, 160, 60));
 
+        assignmentScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        assignmentScrollPane.setBorder(null);
+        assignmentScrollPane.setForeground(new java.awt.Color(255, 255, 255));
+
+        assignmentsTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        assignmentsTable.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
         assignmentsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -155,29 +223,102 @@ public class studentGUI extends studentDatabase {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(assignmentsTable);
+        assignmentsTable.setGridColor(new java.awt.Color(102, 102, 102));
+        assignmentsTable.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        assignmentScrollPane.setViewportView(assignmentsTable);
 
-        javax.swing.GroupLayout assignmentsPanelLayout = new javax.swing.GroupLayout(assignmentsPanel);
-        assignmentsPanel.setLayout(assignmentsPanelLayout);
-        assignmentsPanelLayout.setHorizontalGroup(
-            assignmentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
-            .addGroup(assignmentsPanelLayout.createSequentialGroup()
-                .addGap(223, 223, 223)
-                .addComponent(assignmentsRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        assignmentsPanel.add(assignmentScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 500, 404));
+
+        assignmentsButton.setBackground(new java.awt.Color(255, 255, 255));
+        assignmentsButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        assignmentsButton.setForeground(new java.awt.Color(102, 102, 102));
+        assignmentsButton.setText("Assignments");
+        assignmentsButton.setBorder(null);
+        assignmentsButton.setFocusPainted(false);
+        assignmentsPanel.add(assignmentsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 44, 111, 30));
+
+        assignmentGradesButton.setBackground(new java.awt.Color(102, 102, 102));
+        assignmentGradesButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        assignmentGradesButton.setForeground(new java.awt.Color(255, 255, 255));
+        assignmentGradesButton.setText("Grades");
+        assignmentGradesButton.setBorder(null);
+        assignmentGradesButton.setFocusPainted(false);
+        assignmentGradesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                assignmentGradesButtonActionPerformed(evt);
+            }
+        });
+        assignmentsPanel.add(assignmentGradesButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 44, 80, -1));
+
+        assignmentsTimetableButton.setBackground(new java.awt.Color(102, 102, 102));
+        assignmentsTimetableButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        assignmentsTimetableButton.setForeground(new java.awt.Color(255, 255, 255));
+        assignmentsTimetableButton.setText("Timetable");
+        assignmentsTimetableButton.setBorder(null);
+        assignmentsTimetableButton.setFocusPainted(false);
+        assignmentsTimetableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                assignmentsTimetableButtonActionPerformed(evt);
+            }
+        });
+        assignmentsPanel.add(assignmentsTimetableButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 44, 110, -1));
+
+        assignmentsAcountButton.setBackground(new java.awt.Color(102, 102, 102));
+        assignmentsAcountButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        assignmentsAcountButton.setForeground(new java.awt.Color(255, 255, 255));
+        assignmentsAcountButton.setText("Account");
+        assignmentsAcountButton.setBorder(null);
+        assignmentsAcountButton.setFocusPainted(false);
+        assignmentsAcountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                assignmentsAcountButtonActionPerformed(evt);
+            }
+        });
+        assignmentsPanel.add(assignmentsAcountButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(337, 44, 79, -1));
+
+        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
+
+        tab1logout.setBackground(new java.awt.Color(102, 102, 102));
+        tab1logout.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        tab1logout.setForeground(new java.awt.Color(255, 255, 255));
+        tab1logout.setText("X");
+        tab1logout.setBorder(null);
+        tab1logout.setBorderPainted(false);
+        tab1logout.setFocusPainted(false);
+        tab1logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tab1logoutActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 480, Short.MAX_VALUE)
+                .addComponent(tab1logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        assignmentsPanelLayout.setVerticalGroup(
-            assignmentsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(assignmentsPanelLayout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(assignmentsRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(tab1logout)
+                .addGap(0, 36, Short.MAX_VALUE))
         );
 
-        tabbedPane.addTab("Assignments", assignmentsPanel);
+        assignmentsPanel.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 70));
 
+        getContentPane().add(assignmentsPanel, "card3");
+
+        gradesPanel.setBackground(new java.awt.Color(255, 255, 255));
+        gradesPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 3));
+        gradesPanel.setForeground(new java.awt.Color(102, 102, 102));
+        gradesPanel.setMinimumSize(new java.awt.Dimension(520, 634));
+        gradesPanel.setPreferredSize(new java.awt.Dimension(520, 634));
+        gradesPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        gradesTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        gradesTable.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
         gradesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -189,43 +330,134 @@ public class studentGUI extends studentDatabase {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(gradesTable);
+        gradesTable.setGridColor(new java.awt.Color(0, 0, 0));
+        gradesTable.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        gradesTable.setSelectionForeground(new java.awt.Color(51, 51, 51));
+        gradesScrollPane.setViewportView(gradesTable);
 
+        gradesPanel.add(gradesScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 500, 404));
+
+        gradesRefreshButton.setBackground(new java.awt.Color(102, 102, 102));
+        gradesRefreshButton.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        gradesRefreshButton.setForeground(new java.awt.Color(255, 255, 255));
         gradesRefreshButton.setText("Refresh");
+        gradesRefreshButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        gradesRefreshButton.setFocusPainted(false);
         gradesRefreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 gradesRefreshButtonActionPerformed(evt);
             }
         });
+        gradesPanel.add(gradesRefreshButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 550, 160, 60));
 
-        javax.swing.GroupLayout gradesPanelLayout = new javax.swing.GroupLayout(gradesPanel);
-        gradesPanel.setLayout(gradesPanelLayout);
-        gradesPanelLayout.setHorizontalGroup(
-            gradesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
-            .addGroup(gradesPanelLayout.createSequentialGroup()
-                .addGap(217, 217, 217)
-                .addComponent(gradesRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        gradesAssignmentButton.setBackground(new java.awt.Color(102, 102, 102));
+        gradesAssignmentButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        gradesAssignmentButton.setForeground(new java.awt.Color(255, 255, 255));
+        gradesAssignmentButton.setText("Assignments");
+        gradesAssignmentButton.setBorder(null);
+        gradesAssignmentButton.setFocusPainted(false);
+        gradesAssignmentButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gradesAssignmentButtonActionPerformed(evt);
+            }
+        });
+        gradesPanel.add(gradesAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 44, 111, -1));
+
+        gradesButton.setBackground(new java.awt.Color(255, 255, 255));
+        gradesButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        gradesButton.setForeground(new java.awt.Color(102, 102, 102));
+        gradesButton.setText("Grades");
+        gradesButton.setBorder(null);
+        gradesButton.setFocusPainted(false);
+        gradesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gradesButtonActionPerformed(evt);
+            }
+        });
+        gradesPanel.add(gradesButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 44, 80, 30));
+
+        gradesTimetableButton.setBackground(new java.awt.Color(102, 102, 102));
+        gradesTimetableButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        gradesTimetableButton.setForeground(new java.awt.Color(255, 255, 255));
+        gradesTimetableButton.setText("Timetable");
+        gradesTimetableButton.setBorder(null);
+        gradesTimetableButton.setFocusPainted(false);
+        gradesTimetableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gradesTimetableButtonActionPerformed(evt);
+            }
+        });
+        gradesPanel.add(gradesTimetableButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 44, 110, -1));
+
+        gradesAccountButton.setBackground(new java.awt.Color(102, 102, 102));
+        gradesAccountButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        gradesAccountButton.setForeground(new java.awt.Color(255, 255, 255));
+        gradesAccountButton.setText("Account");
+        gradesAccountButton.setBorder(null);
+        gradesAccountButton.setFocusPainted(false);
+        gradesAccountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gradesAccountButtonActionPerformed(evt);
+            }
+        });
+        gradesPanel.add(gradesAccountButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(337, 44, 79, -1));
+
+        jPanel2.setBackground(new java.awt.Color(102, 102, 102));
+
+        tab2ogout.setBackground(new java.awt.Color(102, 102, 102));
+        tab2ogout.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        tab2ogout.setForeground(new java.awt.Color(255, 255, 255));
+        tab2ogout.setText("X");
+        tab2ogout.setBorder(null);
+        tab2ogout.setBorderPainted(false);
+        tab2ogout.setFocusPainted(false);
+        tab2ogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tab2ogoutActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 480, Short.MAX_VALUE)
+                .addComponent(tab2ogout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        gradesPanelLayout.setVerticalGroup(
-            gradesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(gradesPanelLayout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
-                .addComponent(gradesRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(tab2ogout)
+                .addGap(0, 36, Short.MAX_VALUE))
         );
 
-        tabbedPane.addTab("Grades", gradesPanel);
+        gradesPanel.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 70));
 
+        getContentPane().add(gradesPanel, "card4");
+
+        timetablePanel.setBackground(new java.awt.Color(255, 255, 255));
+        timetablePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 3));
+        timetablePanel.setForeground(new java.awt.Color(102, 102, 102));
+        timetablePanel.setMinimumSize(new java.awt.Dimension(520, 634));
+        timetablePanel.setPreferredSize(new java.awt.Dimension(520, 634));
+        timetablePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        timetableRefreshButton.setBackground(new java.awt.Color(102, 102, 102));
+        timetableRefreshButton.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        timetableRefreshButton.setForeground(new java.awt.Color(255, 255, 255));
         timetableRefreshButton.setText("Refresh");
+        timetableRefreshButton.setBorder(null);
+        timetableRefreshButton.setFocusPainted(false);
         timetableRefreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 timetableRefreshButtonActionPerformed(evt);
             }
         });
+        timetablePanel.add(timetableRefreshButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 550, 160, 60));
 
+        timetableTable.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        timetableTable.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
         timetableTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -237,105 +469,260 @@ public class studentGUI extends studentDatabase {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane3.setViewportView(timetableTable);
+        timetableTable.setGridColor(new java.awt.Color(0, 0, 0));
+        timetableTable.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        timetableTable.setSelectionForeground(new java.awt.Color(51, 51, 51));
+        timetableScrollPane.setViewportView(timetableTable);
 
-        javax.swing.GroupLayout timetablePanelLayout = new javax.swing.GroupLayout(timetablePanel);
-        timetablePanel.setLayout(timetablePanelLayout);
-        timetablePanelLayout.setHorizontalGroup(
-            timetablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
-            .addGroup(timetablePanelLayout.createSequentialGroup()
-                .addGap(223, 223, 223)
-                .addComponent(timetableRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        timetablePanel.add(timetableScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 500, 404));
+
+        timetableAssignmentButton.setBackground(new java.awt.Color(102, 102, 102));
+        timetableAssignmentButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        timetableAssignmentButton.setForeground(new java.awt.Color(255, 255, 255));
+        timetableAssignmentButton.setText("Assignments");
+        timetableAssignmentButton.setBorder(null);
+        timetableAssignmentButton.setFocusPainted(false);
+        timetableAssignmentButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timetableAssignmentButtonActionPerformed(evt);
+            }
+        });
+        timetablePanel.add(timetableAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 44, 111, -1));
+
+        timetableGradesButton.setBackground(new java.awt.Color(102, 102, 102));
+        timetableGradesButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        timetableGradesButton.setForeground(new java.awt.Color(255, 255, 255));
+        timetableGradesButton.setText("Grades");
+        timetableGradesButton.setBorder(null);
+        timetableGradesButton.setFocusPainted(false);
+        timetableGradesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timetableGradesButtonActionPerformed(evt);
+            }
+        });
+        timetablePanel.add(timetableGradesButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 44, 80, -1));
+
+        timetableButton.setBackground(new java.awt.Color(255, 255, 255));
+        timetableButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        timetableButton.setText("Timetable");
+        timetableButton.setBorder(null);
+        timetableButton.setFocusPainted(false);
+        timetableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timetableButtonActionPerformed(evt);
+            }
+        });
+        timetablePanel.add(timetableButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 44, 110, 30));
+
+        timetableAccountButton.setBackground(new java.awt.Color(102, 102, 102));
+        timetableAccountButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        timetableAccountButton.setForeground(new java.awt.Color(255, 255, 255));
+        timetableAccountButton.setText("Account");
+        timetableAccountButton.setBorder(null);
+        timetableAccountButton.setFocusPainted(false);
+        timetableAccountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timetableAccountButtonActionPerformed(evt);
+            }
+        });
+        timetablePanel.add(timetableAccountButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(337, 44, 79, -1));
+
+        tab3Logout.setBackground(new java.awt.Color(102, 102, 102));
+        tab3Logout.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        tab3Logout.setForeground(new java.awt.Color(255, 255, 255));
+        tab3Logout.setText("X");
+        tab3Logout.setBorder(null);
+        tab3Logout.setBorderPainted(false);
+        tab3Logout.setFocusPainted(false);
+        tab3Logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tab3LogoutActionPerformed(evt);
+            }
+        });
+        timetablePanel.add(tab3Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 0, 40, -1));
+
+        jPanel3.setBackground(new java.awt.Color(102, 102, 102));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 520, Short.MAX_VALUE)
         );
-        timetablePanelLayout.setVerticalGroup(
-            timetablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, timetablePanelLayout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
-                .addComponent(timetableRefreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28))
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 70, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Timetable", timetablePanel);
+        timetablePanel.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 70));
 
+        getContentPane().add(timetablePanel, "card5");
+
+        acountPanel.setBackground(new java.awt.Color(255, 255, 255));
+        acountPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 3));
+        acountPanel.setMinimumSize(new java.awt.Dimension(520, 634));
+        acountPanel.setPreferredSize(new java.awt.Dimension(520, 634));
+        acountPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
         jLabel1.setText("Password Change");
+        acountPanel.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(168, 128, 153, 32));
 
-        currentPSWDlabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        currentPSWDlabel.setText("Current Password");
+        currentPSWDlabel.setBackground(new java.awt.Color(255, 255, 255));
+        currentPSWDlabel.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        currentPSWDlabel.setForeground(new java.awt.Color(102, 102, 102));
+        currentPSWDlabel.setText("Current Password:");
+        acountPanel.add(currentPSWDlabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 178, -1, 34));
 
-        newPSWDlabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        newPSWDlabel.setText("New Password");
+        newPSWDlabel.setBackground(new java.awt.Color(255, 255, 255));
+        newPSWDlabel.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        newPSWDlabel.setForeground(new java.awt.Color(102, 102, 102));
+        newPSWDlabel.setText("New Password:");
+        acountPanel.add(newPSWDlabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(127, 268, -1, 30));
 
-        newPSWDlabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        newPSWDlabel1.setText("Repeat New Passord");
+        newPSWDlabel1.setBackground(new java.awt.Color(255, 255, 255));
+        newPSWDlabel1.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        newPSWDlabel1.setForeground(new java.awt.Color(102, 102, 102));
+        newPSWDlabel1.setText("Repeat New Passord:");
+        acountPanel.add(newPSWDlabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(77, 346, -1, 37));
 
+        currentPSWDfield.setBackground(new java.awt.Color(255, 255, 255));
+        currentPSWDfield.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        currentPSWDfield.setBorder(null);
+        acountPanel.add(currentPSWDfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 179, 184, 34));
+
+        newPSWDfield.setBackground(new java.awt.Color(255, 255, 255));
+        newPSWDfield.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        newPSWDfield.setBorder(null);
+        acountPanel.add(newPSWDfield, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 269, 184, 30));
+
+        newPSWDfield1.setBackground(new java.awt.Color(255, 255, 255));
+        newPSWDfield1.setFont(new java.awt.Font("Comic Sans MS", 0, 16)); // NOI18N
+        newPSWDfield1.setBorder(null);
+        acountPanel.add(newPSWDfield1, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 346, 184, 37));
+
+        changePSWDbutton.setBackground(new java.awt.Color(102, 102, 102));
+        changePSWDbutton.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
+        changePSWDbutton.setForeground(new java.awt.Color(255, 255, 255));
         changePSWDbutton.setText("Change");
+        changePSWDbutton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        changePSWDbutton.setFocusPainted(false);
         changePSWDbutton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 changePSWDbuttonActionPerformed(evt);
             }
         });
+        acountPanel.add(changePSWDbutton, new org.netbeans.lib.awtextra.AbsoluteConstraints(171, 418, 140, 60));
 
-        javax.swing.GroupLayout acountPanelLayout = new javax.swing.GroupLayout(acountPanel);
-        acountPanel.setLayout(acountPanelLayout);
-        acountPanelLayout.setHorizontalGroup(
-            acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(acountPanelLayout.createSequentialGroup()
-                .addGap(94, 94, 94)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(newPSWDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(currentPSWDlabel)
-                    .addComponent(newPSWDlabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(newPSWDfield1, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                    .addComponent(newPSWDfield)
-                    .addComponent(currentPSWDfield))
-                .addGap(91, 91, 91))
-            .addGroup(acountPanelLayout.createSequentialGroup()
-                .addGap(225, 225, 225)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(changePSWDbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(238, Short.MAX_VALUE))
+        jScrollPane4.setEnabled(false);
+
+        accountTextArea.setEditable(false);
+        accountTextArea.setColumns(20);
+        accountTextArea.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        accountTextArea.setForeground(new java.awt.Color(102, 102, 102));
+        accountTextArea.setRows(5);
+        accountTextArea.setText(" NOTE:\n    -Password MUST be AT LEAST 8 characters \n    -Password MUST contain AT LEAST one lower- or uppercase \ncarater and AT LEAST one digit");
+        accountTextArea.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+        jScrollPane4.setViewportView(accountTextArea);
+
+        acountPanel.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 490, 500, 110));
+
+        accountAssignmentsButton.setBackground(new java.awt.Color(102, 102, 102));
+        accountAssignmentsButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        accountAssignmentsButton.setForeground(new java.awt.Color(255, 255, 255));
+        accountAssignmentsButton.setText("Assignments");
+        accountAssignmentsButton.setBorder(null);
+        accountAssignmentsButton.setFocusPainted(false);
+        accountAssignmentsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountAssignmentsButtonActionPerformed(evt);
+            }
+        });
+        acountPanel.add(accountAssignmentsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 44, 111, -1));
+
+        accountGradesButton.setBackground(new java.awt.Color(102, 102, 102));
+        accountGradesButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        accountGradesButton.setForeground(new java.awt.Color(255, 255, 255));
+        accountGradesButton.setText("Grades");
+        accountGradesButton.setBorder(null);
+        accountGradesButton.setFocusPainted(false);
+        accountGradesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountGradesButtonActionPerformed(evt);
+            }
+        });
+        acountPanel.add(accountGradesButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(133, 44, 80, -1));
+
+        accountTimetableButton.setBackground(new java.awt.Color(102, 102, 102));
+        accountTimetableButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        accountTimetableButton.setForeground(new java.awt.Color(255, 255, 255));
+        accountTimetableButton.setText("Timetable");
+        accountTimetableButton.setBorder(null);
+        accountTimetableButton.setFocusPainted(false);
+        accountTimetableButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountTimetableButtonActionPerformed(evt);
+            }
+        });
+        acountPanel.add(accountTimetableButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 44, 110, -1));
+
+        accountButton.setBackground(new java.awt.Color(255, 255, 255));
+        accountButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
+        accountButton.setForeground(new java.awt.Color(102, 102, 102));
+        accountButton.setText("Account");
+        accountButton.setBorder(null);
+        accountButton.setFocusPainted(false);
+        accountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                accountButtonActionPerformed(evt);
+            }
+        });
+        acountPanel.add(accountButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(337, 44, 79, 30));
+
+        tab4Logout.setBackground(new java.awt.Color(102, 102, 102));
+        tab4Logout.setFont(new java.awt.Font("Comic Sans MS", 0, 24)); // NOI18N
+        tab4Logout.setForeground(new java.awt.Color(255, 255, 255));
+        tab4Logout.setText("X");
+        tab4Logout.setBorder(null);
+        tab4Logout.setBorderPainted(false);
+        tab4Logout.setFocusPainted(false);
+        tab4Logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tab4LogoutActionPerformed(evt);
+            }
+        });
+        acountPanel.add(tab4Logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 0, 40, -1));
+
+        jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
+        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
+        acountPanel.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 220, 184, 33));
+
+        jSeparator2.setBackground(new java.awt.Color(0, 0, 0));
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
+        acountPanel.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 306, 184, 10));
+
+        jSeparator3.setBackground(new java.awt.Color(0, 0, 0));
+        jSeparator3.setForeground(new java.awt.Color(0, 0, 0));
+        acountPanel.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 390, 184, 10));
+
+        jPanel4.setBackground(new java.awt.Color(102, 102, 102));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 520, Short.MAX_VALUE)
         );
-        acountPanelLayout.setVerticalGroup(
-            acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(acountPanelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(currentPSWDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(currentPSWDfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(38, 38, 38)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(newPSWDlabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newPSWDfield, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
-                .addGroup(acountPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(newPSWDlabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(newPSWDfield1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
-                .addComponent(changePSWDbutton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(159, 159, 159))
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 70, Short.MAX_VALUE)
         );
 
-        tabbedPane.addTab("Account", acountPanel);
+        acountPanel.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 70));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabbedPane)
-        );
+        getContentPane().add(acountPanel, "card6");
 
         pack();
         setLocationRelativeTo(null);
@@ -344,10 +731,6 @@ public class studentGUI extends studentDatabase {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         logout();
     }//GEN-LAST:event_formWindowClosing
-
-    private void assignmentsRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsRefreshButtonActionPerformed
-        updateAssignmentTable(prepareQuery(assignmentQuery, Sid));
-    }//GEN-LAST:event_assignmentsRefreshButtonActionPerformed
 
     private void gradesRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesRefreshButtonActionPerformed
         updateGradesTable(prepareQuery(gradesQuery, Sid));
@@ -360,6 +743,110 @@ public class studentGUI extends studentDatabase {
     private void changePSWDbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePSWDbuttonActionPerformed
         updatePSWD();
     }//GEN-LAST:event_changePSWDbuttonActionPerformed
+
+    private void gradesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesButtonActionPerformed
+        
+    }//GEN-LAST:event_gradesButtonActionPerformed
+
+    private void gradesTimetableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesTimetableButtonActionPerformed
+        gradesPanel.setVisible(false);
+        timetablePanel.setVisible(true);
+    }//GEN-LAST:event_gradesTimetableButtonActionPerformed
+
+    private void gradesAccountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesAccountButtonActionPerformed
+        gradesPanel.setVisible(false);
+        acountPanel.setVisible(true);
+    }//GEN-LAST:event_gradesAccountButtonActionPerformed
+
+    private void tab2ogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tab2ogoutActionPerformed
+        logout();
+    }//GEN-LAST:event_tab2ogoutActionPerformed
+
+    private void timetableGradesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableGradesButtonActionPerformed
+        timetablePanel.setVisible(false);
+        gradesPanel.setVisible(true);
+    }//GEN-LAST:event_timetableGradesButtonActionPerformed
+
+    private void timetableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableButtonActionPerformed
+        
+    }//GEN-LAST:event_timetableButtonActionPerformed
+
+    private void timetableAccountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableAccountButtonActionPerformed
+        timetablePanel.setVisible(false);
+        acountPanel.setVisible(true);
+    }//GEN-LAST:event_timetableAccountButtonActionPerformed
+
+    private void tab3LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tab3LogoutActionPerformed
+       logout();
+    }//GEN-LAST:event_tab3LogoutActionPerformed
+
+    private void accountGradesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountGradesButtonActionPerformed
+        acountPanel.setVisible(false);
+        gradesPanel.setVisible(true);
+    }//GEN-LAST:event_accountGradesButtonActionPerformed
+
+    private void accountTimetableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountTimetableButtonActionPerformed
+        acountPanel.setVisible(false);
+        timetablePanel.setVisible(true);
+    }//GEN-LAST:event_accountTimetableButtonActionPerformed
+
+    private void accountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_accountButtonActionPerformed
+
+    private void tab4LogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tab4LogoutActionPerformed
+        logout();
+    }//GEN-LAST:event_tab4LogoutActionPerformed
+
+    private void gradesAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gradesAssignmentButtonActionPerformed
+        gradesPanel.setVisible(false);
+        assignmentsPanel.setVisible(true);
+    }//GEN-LAST:event_gradesAssignmentButtonActionPerformed
+
+    private void formMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        
+        this.setLocation(x - xMouse, y - yMouse);
+    }//GEN-LAST:event_formMouseDragged
+
+    private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_formMousePressed
+
+    private void accountAssignmentsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accountAssignmentsButtonActionPerformed
+        acountPanel.setVisible(false);
+        assignmentsPanel.setVisible(true);
+    }//GEN-LAST:event_accountAssignmentsButtonActionPerformed
+
+    private void timetableAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timetableAssignmentButtonActionPerformed
+        timetablePanel.setVisible(false);
+        assignmentsPanel.setVisible(true);
+    }//GEN-LAST:event_timetableAssignmentButtonActionPerformed
+
+    private void assignmentsAcountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsAcountButtonActionPerformed
+        assignmentsPanel.setVisible(false);
+        acountPanel.setVisible(true);
+    }//GEN-LAST:event_assignmentsAcountButtonActionPerformed
+
+    private void assignmentsTimetableButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsTimetableButtonActionPerformed
+        assignmentsPanel.setVisible(false);
+        timetablePanel.setVisible(true);
+    }//GEN-LAST:event_assignmentsTimetableButtonActionPerformed
+
+    private void assignmentGradesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentGradesButtonActionPerformed
+        assignmentsPanel.setVisible(false);
+        gradesPanel.setVisible(true);
+    }//GEN-LAST:event_assignmentGradesButtonActionPerformed
+
+    private void tab1logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tab1logoutActionPerformed
+        logout();
+    }//GEN-LAST:event_tab1logoutActionPerformed
+
+    private void assignmentsRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentsRefreshButtonActionPerformed
+        updateAssignmentTable(prepareQuery(assignmentQuery, Sid));
+    }//GEN-LAST:event_assignmentsRefreshButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -398,27 +885,55 @@ public class studentGUI extends studentDatabase {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton accountAssignmentsButton;
+    private javax.swing.JButton accountButton;
+    private javax.swing.JButton accountGradesButton;
+    private javax.swing.JTextArea accountTextArea;
+    private javax.swing.JButton accountTimetableButton;
     private javax.swing.JPanel acountPanel;
+    private javax.swing.JButton assignmentGradesButton;
+    private javax.swing.JScrollPane assignmentScrollPane;
+    private javax.swing.JButton assignmentsAcountButton;
+    private javax.swing.JButton assignmentsButton;
     private javax.swing.JPanel assignmentsPanel;
     private javax.swing.JButton assignmentsRefreshButton;
     private javax.swing.JTable assignmentsTable;
+    private javax.swing.JButton assignmentsTimetableButton;
     private javax.swing.JButton changePSWDbutton;
     private javax.swing.JPasswordField currentPSWDfield;
     private javax.swing.JLabel currentPSWDlabel;
+    private javax.swing.JButton gradesAccountButton;
+    private javax.swing.JButton gradesAssignmentButton;
+    private javax.swing.JButton gradesButton;
     private javax.swing.JPanel gradesPanel;
     private javax.swing.JButton gradesRefreshButton;
+    private javax.swing.JScrollPane gradesScrollPane;
     private javax.swing.JTable gradesTable;
+    private javax.swing.JButton gradesTimetableButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JPasswordField newPSWDfield;
     private javax.swing.JPasswordField newPSWDfield1;
     private javax.swing.JLabel newPSWDlabel;
     private javax.swing.JLabel newPSWDlabel1;
-    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JButton tab1logout;
+    private javax.swing.JButton tab2ogout;
+    private javax.swing.JButton tab3Logout;
+    private javax.swing.JButton tab4Logout;
+    private javax.swing.JButton timetableAccountButton;
+    private javax.swing.JButton timetableAssignmentButton;
+    private javax.swing.JButton timetableButton;
+    private javax.swing.JButton timetableGradesButton;
     private javax.swing.JPanel timetablePanel;
     private javax.swing.JButton timetableRefreshButton;
+    private javax.swing.JScrollPane timetableScrollPane;
     private javax.swing.JTable timetableTable;
     // End of variables declaration//GEN-END:variables
 }

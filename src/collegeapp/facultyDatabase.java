@@ -43,7 +43,7 @@ public abstract class facultyDatabase  extends studentDatabase {
                                         "							FROM subjects\n" +
                                         "                            WHERE subjects.Lecturer = ?);";
     
-    protected String createAssignmentQuery = "INSERT INTO `programming_db`.`assignments` "
+    protected String createAssignmentQuery = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`assignments` "
             + "(`Cid`, `Aid`, `Subject`, `Visible`, `DueDate`) VALUES (?, ?, ?, ?, ?);";
     
     protected String getSubjectQuery = "SELECT subjects.SBid\n" +
@@ -58,9 +58,9 @@ public abstract class facultyDatabase  extends studentDatabase {
                                     "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
                                     "WHERE assignments.Aid = ?;";
     
-    protected String modifyQuery = "UPDATE `programming_db`.`assignments` SET `Visible`=?, `DueDate`=? WHERE `Aid`=?;";
+    protected String modifyQuery = "UPDATE ` maksym_vavilov_16856_provisional_project`.`assignments` SET `Visible`=?, `DueDate`=? WHERE `Aid`=?;";
     
-    protected String deleteQuery = "DELETE FROM `programming_db`.`assignments` WHERE `Aid`=?;";
+    protected String deleteQuery = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`assignments` WHERE `Aid`=?;";
     
     protected String studentQuery = "SELECT student.Sid AS 'Student ID',\n" +
                                 "		student.Fname AS 'First Name',\n" +
@@ -92,7 +92,9 @@ public abstract class facultyDatabase  extends studentDatabase {
                                             "FROM assignment_grades\n" +
                                             "WHERE assignment_grades.Aid = ? AND assignment_grades.Sid = ?;";
     
-    protected String modifyStudentQuery = "UPDATE `programming_db`.`assignment_grades` SET `Grade`=? WHERE `Aid`=? and`Sid`=?;";
+    protected String modifyStudentQuery = "UPDATE `maksym_vavilov_16856_provisional_project`.`assignment_grades` SET `Grade`=? WHERE `Aid`=? and`Sid`=?;";
+    
+    
     
     
     facultyDatabase(){

@@ -1,10 +1,21 @@
-CREATE DATABASE  IF NOT EXISTS `programming_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `programming_db`;
+CREATE DATABASE  IF NOT EXISTS `maksym_vavilov_16856_provisional_project` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `maksym_vavilov_16856_provisional_project`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: programming_db
 -- ------------------------------------------------------
 -- Server version	5.7.19-log
+
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+-- AUTHOR Maksym Vavilov. Student ID - 16856
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -53,7 +64,7 @@ DROP TABLE IF EXISTS `assignments`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assignments` (
-  `Gid` varchar(10) NOT NULL,
+  `Cid` varchar(10) NOT NULL,
   `Aid` varchar(10) NOT NULL,
   `Subject` varchar(10) NOT NULL,
   `Visible` varchar(3) NOT NULL,
@@ -148,7 +159,7 @@ CREATE TABLE `branches` (
 
 LOCK TABLES `branches` WRITE;
 /*!40000 ALTER TABLE `branches` DISABLE KEYS */;
-INSERT INTO `branches` VALUES ('B01','A2'),('B01','C1'),('B01','C2'),('B01','C3'),('B02','B1'),('B02','B2'),('B03','A1'),('B03','A3'),('B03','D1'),('B03','D2'),('B03','S2');
+INSERT INTO `branches` VALUES ('B01','C1'),('B01','C2'),('B01','C3'),('B02','B1'),('B02','B2'),('B03','A1'),('B03','A3'),('B03','D1'),('B03','D2'),('B03','S2');
 /*!40000 ALTER TABLE `branches` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,33 +243,6 @@ INSERT INTO `grades` VALUES ('S01','SB02',100,NULL),('S01','SB03',100,NULL),('S0
 UNLOCK TABLES;
 
 --
--- Table structure for table `group`
---
-
-DROP TABLE IF EXISTS `group`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `group` (
-  `Sid` varchar(10) NOT NULL,
-  `Gid` varchar(10) NOT NULL,
-  PRIMARY KEY (`Sid`,`Gid`),
-  KEY `Gid2_idx` (`Gid`),
-  CONSTRAINT `Gid2` FOREIGN KEY (`Gid`) REFERENCES `group_details` (`Gid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Sid3` FOREIGN KEY (`Sid`) REFERENCES `student` (`Sid`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `group`
---
-
-LOCK TABLES `group` WRITE;
-/*!40000 ALTER TABLE `group` DISABLE KEYS */;
-INSERT INTO `group` VALUES ('S06','G01'),('S09','G01'),('S10','G01'),('S02','G02'),('S05','G02'),('S11','G03'),('S12','G03'),('S13','G03'),('S01','G04'),('S03','G04'),('S04','G04'),('S07','G05'),('S08','G05');
-/*!40000 ALTER TABLE `group` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `group_details`
 --
 
@@ -269,7 +253,7 @@ CREATE TABLE `group_details` (
   `Gid` varchar(10) NOT NULL,
   `Cid` varchar(10) NOT NULL,
   `Superviser` varchar(45) NOT NULL,
-  PRIMARY KEY (`Gid`,`Cid`),
+  PRIMARY KEY (`Gid`),
   KEY `Cid2_idx` (`Cid`),
   KEY `Fid_idx` (`Superviser`),
   CONSTRAINT `Cid2` FOREIGN KEY (`Cid`) REFERENCES `courses` (`Cid`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -283,8 +267,35 @@ CREATE TABLE `group_details` (
 
 LOCK TABLES `group_details` WRITE;
 /*!40000 ALTER TABLE `group_details` DISABLE KEYS */;
-INSERT INTO `group_details` VALUES ('G01','A1','F01'),('G03','C1','F02'),('G04','C2','F02'),('G02','B1','F03'),('G05','S2','F07');
+INSERT INTO `group_details` VALUES ('G01','A1','F01'),('G02','B1','F03'),('G03','C1','F02'),('G04','C2','F02'),('G05','S2','F07');
 /*!40000 ALTER TABLE `group_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `groups`
+--
+
+DROP TABLE IF EXISTS `groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `groups` (
+  `Sid` varchar(10) NOT NULL,
+  `Gid` varchar(10) NOT NULL,
+  PRIMARY KEY (`Sid`,`Gid`),
+  KEY `Gid2_idx` (`Gid`),
+  CONSTRAINT `Gid2` FOREIGN KEY (`Gid`) REFERENCES `group_details` (`Gid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Sid3` FOREIGN KEY (`Sid`) REFERENCES `student` (`Sid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `groups`
+--
+
+LOCK TABLES `groups` WRITE;
+/*!40000 ALTER TABLE `groups` DISABLE KEYS */;
+INSERT INTO `groups` VALUES ('S06','G01'),('S09','G01'),('S10','G01'),('S02','G02'),('S05','G02'),('S11','G03'),('S12','G03'),('S13','G03'),('S01','G04'),('S03','G04'),('S04','G04'),('S07','G05'),('S08','G05');
+/*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -308,7 +319,7 @@ CREATE TABLE `login` (
 
 LOCK TABLES `login` WRITE;
 /*!40000 ALTER TABLE `login` DISABLE KEYS */;
-INSERT INTO `login` VALUES ('admin','admin','admin'),('faculty','faculty','faculty'),('S01','panadol','student'),('student','student','student');
+INSERT INTO `login` VALUES ('admin','admin','admin'),('F01','panadol','faculty'),('F02','panadol','faculty'),('S01','panadol','student');
 /*!40000 ALTER TABLE `login` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -432,4 +443,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-14 22:40:35
+-- Dump completed on 2018-05-20 20:46:05
