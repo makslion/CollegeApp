@@ -12,3 +12,4 @@ Versions:
 - 0.4 Implemented all required features. Complete working solution. 
 - 1.0 RELEASE. Fixed all known bugs and optimised. 
 - 1.1 Partialy implemented improoved GUI (for login, student and faculty)
+- 2.0 FINAL. Implemented improoved GUI (custom design, enhanced ergonomy and UX)
