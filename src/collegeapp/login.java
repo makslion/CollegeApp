@@ -415,7 +415,7 @@ public class login extends javax.swing.JFrame implements Idatabase {
         getContentPane().add(loginPanel, "card2");
 
         conectionPanel.setBackground(new java.awt.Color(255, 255, 255));
-        conectionPanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(102, 102, 102), 3, true));
+        conectionPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 3));
 
         toLoginPanel.setBackground(new java.awt.Color(102, 102, 102));
         toLoginPanel.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N

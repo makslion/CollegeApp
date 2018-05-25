@@ -42,12 +42,12 @@ public abstract class adminDatabase extends facultyDatabase{
                                         "FROM student\n" +
                                         "WHERE student.Sid = ?;";
     
-    protected String deleteStudentQuery = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`student` WHERE `Sid`=?;";
+    protected String deleteStudentQuery = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`student` WHERE `Sid`=?;";
     
-    protected String createStudentQuery = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`student` (`Sid`, `Fname`, `Lname`, `Course`, `Phone`, `Address`) "
+    protected String createStudentQuery = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`student` (`Sid`, `Fname`, `Lname`, `Course`, `Phone`, `Address`) "
                                             + "VALUES (?, ?, ?, ?, ?, ?);";
     
-    protected String modifyStudentQuery = "UPDATE ` maksym_vavilov_16856_provisional_project`.`student` SET "
+    protected String modifyStudentQuery = "UPDATE `maksym_vavilov_16856_provisional_project`.`student` SET "
                                         + "`Fname`=?, `Lname`=?,"
                                         + " `Course`=?, `Phone`=?, "
                                         + "`Address`=?"
@@ -59,12 +59,12 @@ public abstract class adminDatabase extends facultyDatabase{
                                         "FROM attendance\n" +
                                         "WHERE attendance.Sid = ?;";
     
-    protected String createAttendance = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`attendance` (`Sid`, `Lessons`, `Attended`) "
+    protected String createAttendance = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`attendance` (`Sid`, `Lessons`, `Attended`) "
                                         + "VALUES (?, ?, ?);";
     
-    protected String deleteAttendance = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`attendance` WHERE `Sid`=?;";
+    protected String deleteAttendance = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`attendance` WHERE `Sid`=?;";
     
-    protected String modifyAttendance = "UPDATE ` maksym_vavilov_16856_provisional_project`.`attendance` "
+    protected String modifyAttendance = "UPDATE `maksym_vavilov_16856_provisional_project`.`attendance` "
                                         + "SET `Lessons`=?, `Attended`=? "
                                         + "WHERE `Sid`=?;";
     
@@ -83,15 +83,15 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "FROM (groups\n" +
                                 "	INNER JOIN student ON groups.Sid = student.Sid);";
     
-    protected String createGroupDetails = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`group_details` (`Gid`, `Cid`, `Superviser`) VALUES (?, ?, ?);";
+    protected String createGroupDetails = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`group_details` (`Gid`, `Cid`, `Superviser`) VALUES (?, ?, ?);";
     
-    protected String deleteGroupDetails = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`group_details` WHERE `Gid`=? and`Cid`=?;";
+    protected String deleteGroupDetails = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`group_details` WHERE `Gid`=? and`Cid`=?;";
     
-    protected String modifyGroupDetails = "UPDATE ` maksym_vavilov_16856_provisional_project`.`group_details` SET `Superviser`=? WHERE `Gid`=? and`Cid`=?;";
+    protected String modifyGroupDetails = "UPDATE `maksym_vavilov_16856_provisional_project`.`group_details` SET `Superviser`=? WHERE `Gid`=? and`Cid`=?;";
     
-    protected String createGroups = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`groups` (`Sid`, `Gid`) VALUES (?, ?);";
+    protected String createGroups = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`groups` (`Sid`, `Gid`) VALUES (?, ?);";
     
-    protected String deleteGroups = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`groups` WHERE `Sid`=? and`Gid`=?;";
+    protected String deleteGroups = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`groups` WHERE `Sid`=? and`Gid`=?;";
     
     protected String selectTimetable = "SELECT timetable.Gid AS 'Group ID',\n" +
                                     "		timetable.Day,\n" +
@@ -106,15 +106,15 @@ public abstract class adminDatabase extends facultyDatabase{
     protected String timetableFill2 = "SELECT subjects.Subject\n" +
                                     "FROM subjects;";
     
-    protected String timetableCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`timetable` "
+    protected String timetableCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`timetable` "
                                 + "(`Gid`, `Day`, `Subject`, `Start`, `End`) VALUES "
                                 + "(?, ?, ?, ?, ?);";
     
-    protected String timetableModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`timetable` SET "
+    protected String timetableModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`timetable` SET "
                                 + "`Subject`=?, `Start`=?, `End`=? WHERE "
                                 + "`Gid`=? and`Day`=?;";
     
-    protected String timetableDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`timetable` WHERE "
+    protected String timetableDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`timetable` WHERE "
                                 + "`Gid`=? and`Day`=?;";
     
     protected String coursesSelect = "SELECT courses.Cid AS 'Course ID',\n" +
@@ -136,13 +136,13 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "FROM courses\n" +
                                 "WHERE courses.Cid = ?;";
     
-    protected String courseDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`courses` WHERE `Cid`=?;";
+    protected String courseDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`courses` WHERE `Cid`=?;";
     
-    protected String courseCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`courses` "
+    protected String courseCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`courses` "
                                     + "(`Cid`, `Course`, `Price`) VALUES "
                                     + "(?, ?, ?);";
     
-    protected String courseModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`courses` SET "
+    protected String courseModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`courses` SET "
                                     + "`Course`=?, `Price`=? WHERE `Cid`=?;";
     
     protected String paymentFind ="SELECT  payments.Sid AS 'Student ID',\n" +
@@ -152,13 +152,13 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "	INNER JOIN student ON payments.Sid = student.Sid)\n" +
                                 "WHERE student.Sid = ?;";
     
-    protected String paymentCreate ="INSERT INTO ` maksym_vavilov_16856_provisional_project`.`payments` "
+    protected String paymentCreate ="INSERT INTO `maksym_vavilov_16856_provisional_project`.`payments` "
                                     + "(`Sid`, `Required`, `Payed`) VALUES "
                                     + "(?, ?, ?);";
     
-    protected String paymentDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`payments` WHERE `Sid`=?;";
+    protected String paymentDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`payments` WHERE `Sid`=?;";
     
-    protected String paymentModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`payments` SET "
+    protected String paymentModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`payments` SET "
                                     + "`Required`=?, `Payed`=? WHERE "
                                     + "`Sid`=?;";
     
@@ -185,22 +185,22 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "FROM branch_details\n" +
                                 "WHERE branch_details.Bid = ?;";
     
-    protected String branchCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`branch_details` "
+    protected String branchCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`branch_details` "
                                     + "(`Bid`, `Bname`, `Baddress`) VALUES "
                                     + "(?, ?, ?);";
     
-    protected String branchDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`branch_details`"
+    protected String branchDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`branch_details`"
                                     + " WHERE `Bid`=?;";
 
-    protected String branchModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`branch_details` SET "
+    protected String branchModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`branch_details` SET "
                                 + "`Bname`=?, `Baddress`=? "
                                 + "WHERE `Bid`=?;";
 
-    protected String branchCreate2 = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`branches` "
+    protected String branchCreate2 = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`branches` "
                                     + "(`Bid`, `Courses`) VALUES "
                                     + "(?, ?);";
 
-    protected String branchDelete2 = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`branches` WHERE "
+    protected String branchDelete2 = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`branches` WHERE "
                                     + "`Courses`=? and`Bid`=?;";
     
     protected String gradesSelect = "SELECT grades.Sid AS 'Student ID',\n" +
@@ -238,18 +238,18 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "FROM grades\n" +
                                 "WHERE grades.Sid = ? AND grades.SBid = ?";
     
-    protected String gradesCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`grades` "
+    protected String gradesCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`grades` "
                                     + "(`Sid`, `SBid`, `Grade`, `ExamGrade`) VALUES "
                                     + "(?, ?, ?, ?);";
     
-    protected String gradesDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`grades` WHERE "
+    protected String gradesDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`grades` WHERE "
                                 + "`Sid`=? and`SBid`=?;";
     
-    protected String  gradesModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`grades` SET "
+    protected String  gradesModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`grades` SET "
                                 + "`Grade`=?, `ExamGrade`=? WHERE "
                                 + "`Sid`=? and`SBid`=?;";
     
-    protected String assignmentGradesCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`assignment_grades` "
+    protected String assignmentGradesCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`assignment_grades` "
                                             + "(`Aid`, `Sid`, `Grade`) VALUES "
                                             + "(?, ?, ?);";
     
@@ -257,10 +257,10 @@ public abstract class adminDatabase extends facultyDatabase{
                                             "FROM assignment_grades\n" +
                                             "WHERE assignment_grades.Aid = ? AND assignment_grades.Sid = ?;";
     
-    protected String assignmentGradesDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`assignment_grades` WHERE "
+    protected String assignmentGradesDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`assignment_grades` WHERE "
                                             + "`Aid`=? and`Sid`=?;";
     
-    protected String assignmentGradesModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`assignment_grades` SET "
+    protected String assignmentGradesModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`assignment_grades` SET "
                                             + "`Grade`=? WHERE "
                                             + "`Aid`=? and`Sid`=?;";
     
@@ -278,14 +278,14 @@ public abstract class adminDatabase extends facultyDatabase{
     protected String getCourseID = "SELECT courses.Cid\n" +
                                     "FROM courses;";
     
-    protected String assignmentCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`assignments` "
+    protected String assignmentCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`assignments` "
                                     + "(`Cid`, `Aid`, `Subject`, `Visible`, `DueDate`) VALUES "
                                     + "(?, ?, ?, ?, ?);";
     
-    protected String assignmentDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`assignments` WHERE "
+    protected String assignmentDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`assignments` WHERE "
                                     + "`Aid`=?;";
     
-    protected String assignmentModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`assignments` SET "
+    protected String assignmentModify = "UPDATE `maksym_vavilov_16856_provisional_project`.`assignments` SET "
                                     + "`Cid`=?, `Subject`=?, `Visible`=?, `DueDate`=? WHERE "
                                     + "`Aid`=?;";
     
@@ -319,28 +319,28 @@ public abstract class adminDatabase extends facultyDatabase{
                                         "FROM faculty_members\n" +
                                         "WHERE faculty_members.Fid = ?;";
     
-    protected String facultyCreateButton1 = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`faculty_members` "
+    protected String facultyCreateButton1 = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`faculty_members` "
                                             + "(`Fid`, `Fname`, `Lname`) VALUES "
                                             + "(?,?, ?);";
     
-    protected String facultyDeleteButton1 = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`faculty_members` WHERE"
+    protected String facultyDeleteButton1 = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`faculty_members` WHERE"
                                         + " `Fid`=?;";
     
-    protected String facultyModifyButton1 = "UPDATE ` maksym_vavilov_16856_provisional_project`.`faculty_members` SET "
+    protected String facultyModifyButton1 = "UPDATE `maksym_vavilov_16856_provisional_project`.`faculty_members` SET "
                                         + "`Fname`=?, `Lname`=? WHERE "
                                         + "`Fid`=?;";
     
     protected String subjectsFind = "SELECT * FROM subjects\n" +
                                     "WHERE subjects.SBid = ?;";
     
-    protected String subjectsCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`subjects` "
+    protected String subjectsCreate = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`subjects` "
                                     + "(`SBid`, `Lecturer`, `Subject`) VALUES "
                                     + "(?, ?, ?);";
     
-    protected String subjectsDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`subjects` WHERE "
+    protected String subjectsDelete = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`subjects` WHERE "
                                     + "`SBid`=?;";
     
-    protected String subjectsModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`subjects` SET "
+    protected String subjectsModify = "UPDATE maksym_vavilov_16856_provisional_project.subjects SET "
                                     + "`Lecturer`=?, `Subject`=? WHERE "
                                     + "`SBid`=?;";
     
@@ -349,18 +349,18 @@ public abstract class adminDatabase extends facultyDatabase{
                                 "		login.Role\n" +
                                 "FROM login;";
     
-    protected String loginCreate = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`login` "
+    protected String loginCreate = "INSERT INTO maksym_vavilov_16856_provisional_project.login "
                                 + "(`Username`, `Password`, `Role`) VALUES "
                                 + "(?, 'panadol', ?);";
     
-    protected String loginDelete = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`login` WHERE "
+    protected String loginDelete = "DELETE FROM maksym_vavilov_16856_provisional_project.login WHERE "
                                 + "`Username`=?;";
     
-    protected String loginModify = "UPDATE ` maksym_vavilov_16856_provisional_project`.`login` SET "
+    protected String loginModify = "UPDATE  maksym_vavilov_16856_provisional_project.login SET "
                                 + "`Role`=? WHERE "
                                 + "`Username`=?;";
     
-    protected String loginReset = "UPDATE ` maksym_vavilov_16856_provisional_project`.`login` SET "
+    protected String loginReset = "UPDATE maksym_vavilov_16856_provisional_project.login SET "
                                 + "`Password`='panadol' WHERE "
                                 + "`Username`=?;";
     

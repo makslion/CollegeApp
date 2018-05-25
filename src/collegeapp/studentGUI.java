@@ -61,7 +61,7 @@ public class studentGUI extends studentDatabase {
     private void updatePSWD(){
        String currentPSWD = new String (currentPSWDfield.getPassword());
         char [] newPSWD = newPSWDfield.getPassword();
-        char [] newPSWD1 = newPSWDfield.getPassword();
+        char [] newPSWD1 = newPSWDfield1.getPassword();
         String newPassword = new String (newPSWD);
         ResultSet resultSet = null;
         

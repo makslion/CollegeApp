@@ -5,6 +5,17 @@
  */
 package collegeapp;
 
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.plaf.ComboBoxUI;
+import javax.swing.plaf.basic.BasicArrowButton;
+import javax.swing.plaf.basic.BasicComboBoxUI;
+
 /**
  *
  * @author Maksym Vavilov 16856
@@ -43,7 +54,11 @@ public abstract class facultyDatabase  extends studentDatabase {
                                         "							FROM subjects\n" +
                                         "                            WHERE subjects.Lecturer = ?);";
     
-    protected String createAssignmentQuery = "INSERT INTO ` maksym_vavilov_16856_provisional_project`.`assignments` "
+    protected String assugnmenttFillQuery2 = "SELECT group_details.Cid \n" +
+                                        "FROM group_details\n" +
+                                        "WHERE group_details.Superviser = ?;";
+    
+    protected String createAssignmentQuery = "INSERT INTO `maksym_vavilov_16856_provisional_project`.`assignments` "
             + "(`Cid`, `Aid`, `Subject`, `Visible`, `DueDate`) VALUES (?, ?, ?, ?, ?);";
     
     protected String getSubjectQuery = "SELECT subjects.SBid\n" +
@@ -58,9 +73,9 @@ public abstract class facultyDatabase  extends studentDatabase {
                                     "	INNER JOIN subjects ON assignments.Subject = subjects.SBid)\n" +
                                     "WHERE assignments.Aid = ?;";
     
-    protected String modifyQuery = "UPDATE ` maksym_vavilov_16856_provisional_project`.`assignments` SET `Visible`=?, `DueDate`=? WHERE `Aid`=?;";
+    protected String modifyQuery = "UPDATE `maksym_vavilov_16856_provisional_project`.`assignments` SET `Visible`=?, `DueDate`=? WHERE `Aid`=?;";
     
-    protected String deleteQuery = "DELETE FROM ` maksym_vavilov_16856_provisional_project`.`assignments` WHERE `Aid`=?;";
+    protected String deleteQuery = "DELETE FROM `maksym_vavilov_16856_provisional_project`.`assignments` WHERE `Aid`=?;";
     
     protected String studentQuery = "SELECT student.Sid AS 'Student ID',\n" +
                                 "		student.Fname AS 'First Name',\n" +
@@ -101,6 +116,54 @@ public abstract class facultyDatabase  extends studentDatabase {
     
     }
     
+    protected  final void editCombo(JComboBox cb){
+        //cb.getEditor().getEditorComponent().setBackground(Color.WHITE);
+        //UIManager.put("cb.disabledBackground", Color.WHITE);
+        //((JTextField)cb.getEditor().getEditorComponent()).setDisabledTextColor(Color.WHITE);
+        //UIManager.getDefaults().put("cb.disabledBackground",java.awt.Color.WHITE );
+        //cb.setRenderer(new MyRenderer());
+        
+        cb.setBackground(Color.WHITE);
+        cb.setUI(ColorArrowUI.createUI(cb));
+        ListCellRenderer renderer = cb.getRenderer();
+        cb.setRenderer(new FixDisabledCBRenderer(cb,renderer));
+        
+    }
     
     
+    
+}
+
+class ColorArrowUI extends BasicComboBoxUI {
+
+    public static ComboBoxUI createUI(JComponent c) {
+        return new ColorArrowUI();
+    }
+
+    @Override protected JButton createArrowButton() {
+        return new BasicArrowButton(
+            BasicArrowButton.SOUTH,
+            Color.WHITE, Color.WHITE,
+            Color.BLACK, Color.WHITE);
+    }
+}
+
+
+class FixDisabledCBRenderer implements ListCellRenderer{
+    private JComboBox comboBox;
+    private ListCellRenderer renderer;
+
+    public FixDisabledCBRenderer(JComboBox combo, ListCellRenderer renderer) {
+        comboBox = combo;
+        this.renderer = renderer;
+        }
+
+    public Component getListCellRendererComponent(JList list, Object value, 
+                        int index, boolean isSelected, boolean cellHasFocus){
+        Component return_value = renderer.getListCellRendererComponent
+        (list, value, index, isSelected, cellHasFocus);
+        if (return_value instanceof JComponent)
+        ((JComponent)return_value).setOpaque(comboBox.isEnabled());
+        return return_value;
+        }
 }

@@ -24,6 +24,7 @@ public class facultyGUI extends facultyDatabase {
     /**
      * Creates new form facultyGUI
      */
+    private String mem;
     
     public facultyGUI(String fid) {
         initComponents();
@@ -44,6 +45,14 @@ public class facultyGUI extends facultyDatabase {
         designTable(assignmentsTable,assignmentsScrollPane);
         designTable(studentTable,studentScrollPane);
         designTable(studentGradesTable,studentGradesScrollPane);
+        
+        editCombo(comboBoxCourse);
+        editCombo(assignmentComboBox);
+        editCombo(comboBoxCreateAssignment);
+        editCombo(comboBoxModifyAssignment);
+        editCombo(studentAssignmentCombo);
+        editCombo(studentStudentCombo);
+        
     }
     
     private void updatePSWD(){
@@ -53,38 +62,36 @@ public class facultyGUI extends facultyDatabase {
         String newPassword = new String (newPSWD);
         ResultSet resultSet = null;
         
-        if(!java.util.Arrays.equals(newPSWD,newPSWD1))
+       if(!java.util.Arrays.equals(newPSWD,newPSWD1))
             JOptionPane.showMessageDialog(this, "Password not equal","Oops",JOptionPane.WARNING_MESSAGE);
-        
-        
-        try{
-            Connection conn = DriverManager.getConnection(connectionDetails);
-            
-            PrepStatement = conn.prepareStatement(pswdCheck);
-            PrepStatement.setString(1, Fid);
-            
-            resultSet = PrepStatement.executeQuery();
-            
-            resultSet.next();
-            if(!resultSet.getString("Password").equals(currentPSWD)&&newPassword.matches(pattern)){
-                JOptionPane.showMessageDialog(this, "Wrong Password","Oops",JOptionPane.WARNING_MESSAGE);
+        else if (!newPassword.matches(pattern))
+            JOptionPane.showMessageDialog(this, "Invalid New Password","Oops",JOptionPane.WARNING_MESSAGE);
+        else{
+            try{
+                Connection conn = DriverManager.getConnection(connectionDetails);
+
+                PrepStatement = conn.prepareStatement(pswdCheck);
+                PrepStatement.setString(1, Fid);
+
+                resultSet = PrepStatement.executeQuery();
+
+                resultSet.next();
+                if(!resultSet.getString("Password").equals(currentPSWD))
+                    JOptionPane.showMessageDialog(this, "Wrong Password","Oops",JOptionPane.WARNING_MESSAGE);
+                else {
+                    PrepStatement = conn.prepareStatement(pswdQuery);
+
+                    PrepStatement.setString(1, newPassword);
+                    PrepStatement.setString(2, Fid);
+
+                    int result = PrepStatement.executeUpdate();
+                    System.out.println(result);
+                    JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
+                }
             }
-            else {
-                PrepStatement = conn.prepareStatement(pswdQuery);
-                
-                PrepStatement.setString(1, newPassword);
-                PrepStatement.setString(2, Fid);
-                
-                int result = PrepStatement.executeUpdate();
-                System.out.println(result);
-                JOptionPane.showMessageDialog(this, "Password Changed!","Hooray!",JOptionPane.INFORMATION_MESSAGE);
+            catch(SQLException e){
+                JOptionPane.showMessageDialog(this, e,"Ooops",JOptionPane.ERROR_MESSAGE);
             }
-            
-            
-            
-        }
-        catch(SQLException e){
-            JOptionPane.showMessageDialog(this, e,"Ooops",JOptionPane.ERROR_MESSAGE);
         }
         
     }
@@ -224,14 +231,24 @@ public class facultyGUI extends facultyDatabase {
     
     
     private void assignmentFill(){
-        ResultSet rs = prepareQuery(assignmentFillQuery, Fid);
+        assignmentComboBox.removeAllItems();
+        comboBoxCourse.removeAllItems();
         
         try {
+            ResultSet rs = prepareQuery(assignmentFillQuery, Fid);
+            
             while(rs.next()){
                 assignmentComboBox.addItem(rs.getString(1));
                 subjectField1.setText(rs.getString(2));
-                comboBoxCourse.addItem(rs.getString(3));
+                mem = rs.getString(1);
             }
+            
+            rs = prepareQuery(assugnmenttFillQuery2, Fid);
+            
+            while (rs.next())
+                comboBoxCourse.addItem(rs.getString(1));
+            
+            
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this , e, "Ooops", JOptionPane.ERROR_MESSAGE);
         }
@@ -367,13 +384,7 @@ public class facultyGUI extends facultyDatabase {
         comboBoxCourse = new javax.swing.JComboBox<>();
         datePicker1 = new com.toedter.calendar.JDateChooser();
         datePicker2 = new com.toedter.calendar.JDateChooser();
-        jSeparator1 = new javax.swing.JSeparator();
-        jSeparator4 = new javax.swing.JSeparator();
-        jSeparator5 = new javax.swing.JSeparator();
         jSeparator6 = new javax.swing.JSeparator();
-        jSeparator8 = new javax.swing.JSeparator();
-        jSeparator9 = new javax.swing.JSeparator();
-        jSeparator10 = new javax.swing.JSeparator();
         assignmentsTimeetableButton = new javax.swing.JButton();
         assignmentsButton = new javax.swing.JButton();
         assignmentsStudentButton = new javax.swing.JButton();
@@ -400,8 +411,6 @@ public class facultyGUI extends facultyDatabase {
         studentAssignmentsButton = new javax.swing.JButton();
         studentButton = new javax.swing.JButton();
         studentAccountButton = new javax.swing.JButton();
-        jSeparator11 = new javax.swing.JSeparator();
-        jSeparator12 = new javax.swing.JSeparator();
         jSeparator13 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
         logout3 = new javax.swing.JButton();
@@ -643,10 +652,9 @@ public class facultyGUI extends facultyDatabase {
         subjectField1.setBorder(null);
         assignmentPanel.add(subjectField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(536, 206, 90, -1));
 
-        comboBoxCreateAssignment.setEditable(true);
         comboBoxCreateAssignment.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
         comboBoxCreateAssignment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "yes", "no" }));
-        comboBoxCreateAssignment.setBorder(null);
+        comboBoxCreateAssignment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         assignmentPanel.add(comboBoxCreateAssignment, new org.netbeans.lib.awtextra.AbsoluteConstraints(912, 204, 53, -1));
 
         createAssignmentButton.setBackground(new java.awt.Color(102, 102, 102));
@@ -694,10 +702,14 @@ public class facultyGUI extends facultyDatabase {
         subjectField2.setBorder(null);
         assignmentPanel.add(subjectField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(536, 408, 90, -1));
 
-        comboBoxModifyAssignment.setEditable(true);
         comboBoxModifyAssignment.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
         comboBoxModifyAssignment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "yes", "no" }));
-        comboBoxModifyAssignment.setBorder(null);
+        comboBoxModifyAssignment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        comboBoxModifyAssignment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxModifyAssignmentActionPerformed(evt);
+            }
+        });
         assignmentPanel.add(comboBoxModifyAssignment, new org.netbeans.lib.awtextra.AbsoluteConstraints(906, 406, 53, -1));
 
         modifyAssignmentButton.setBackground(new java.awt.Color(102, 102, 102));
@@ -710,7 +722,7 @@ public class facultyGUI extends facultyDatabase {
                 modifyAssignmentButtonActionPerformed(evt);
             }
         });
-        assignmentPanel.add(modifyAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(473, 455, 153, 81));
+        assignmentPanel.add(modifyAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(473, 455, 153, 35));
 
         deleteAssignmentButton.setBackground(new java.awt.Color(102, 102, 102));
         deleteAssignmentButton.setFont(new java.awt.Font("Comic Sans MS", 0, 18)); // NOI18N
@@ -722,11 +734,10 @@ public class facultyGUI extends facultyDatabase {
                 deleteAssignmentButtonActionPerformed(evt);
             }
         });
-        assignmentPanel.add(deleteAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 455, 153, 81));
+        assignmentPanel.add(deleteAssignmentButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 455, 153, 35));
 
-        assignmentComboBox.setEditable(true);
         assignmentComboBox.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
-        assignmentComboBox.setBorder(null);
+        assignmentComboBox.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         assignmentComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 assignmentComboBoxActionPerformed(evt);
@@ -751,46 +762,28 @@ public class facultyGUI extends facultyDatabase {
         courseField2.setBorder(null);
         assignmentPanel.add(courseField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(653, 408, 92, -1));
 
-        comboBoxCourse.setEditable(true);
         comboBoxCourse.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
-        comboBoxCourse.setBorder(null);
+        comboBoxCourse.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        comboBoxCourse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxCourseActionPerformed(evt);
+            }
+        });
         assignmentPanel.add(comboBoxCourse, new org.netbeans.lib.awtextra.AbsoluteConstraints(644, 204, 85, -1));
 
         datePicker1.setBackground(new java.awt.Color(255, 255, 255));
+        datePicker1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         datePicker1.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
         assignmentPanel.add(datePicker1, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 204, 127, 25));
 
         datePicker2.setBackground(new java.awt.Color(255, 255, 255));
+        datePicker2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         datePicker2.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
         assignmentPanel.add(datePicker2, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 406, 117, 25));
-
-        jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(417, 438, 101, 10));
-
-        jSeparator4.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator4.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 438, 119, 10));
-
-        jSeparator5.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator5.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(904, 438, 55, 10));
 
         jSeparator6.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator6.setForeground(new java.awt.Color(0, 0, 0));
         assignmentPanel.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(417, 236, 101, 10));
-
-        jSeparator8.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator8.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(644, 236, 85, 10));
-
-        jSeparator9.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator9.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(767, 236, 127, 10));
-
-        jSeparator10.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator10.setForeground(new java.awt.Color(0, 0, 0));
-        assignmentPanel.add(jSeparator10, new org.netbeans.lib.awtextra.AbsoluteConstraints(912, 236, 53, 10));
 
         assignmentsTimeetableButton.setBackground(new java.awt.Color(102, 102, 102));
         assignmentsTimeetableButton.setFont(new java.awt.Font("Comic Sans MS", 0, 14)); // NOI18N
@@ -957,9 +950,8 @@ public class facultyGUI extends facultyDatabase {
         studentGradeLabel.setText("Grade");
         studentPanel.add(studentGradeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(745, 461, -1, -1));
 
-        studentAssignmentCombo.setEditable(true);
         studentAssignmentCombo.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
-        studentAssignmentCombo.setBorder(null);
+        studentAssignmentCombo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         studentAssignmentCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 studentAssignmentComboActionPerformed(evt);
@@ -967,9 +959,8 @@ public class facultyGUI extends facultyDatabase {
         });
         studentPanel.add(studentAssignmentCombo, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 494, 91, -1));
 
-        studentStudentCombo.setEditable(true);
         studentStudentCombo.setFont(new java.awt.Font("Comic Sans MS", 0, 13)); // NOI18N
-        studentStudentCombo.setBorder(null);
+        studentStudentCombo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         studentStudentCombo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 studentStudentComboActionPerformed(evt);
@@ -1041,14 +1032,6 @@ public class facultyGUI extends facultyDatabase {
             }
         });
         studentPanel.add(studentAccountButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(294, 44, 70, -1));
-
-        jSeparator11.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator11.setForeground(new java.awt.Color(0, 0, 0));
-        studentPanel.add(jSeparator11, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 526, 91, 10));
-
-        jSeparator12.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator12.setForeground(new java.awt.Color(0, 0, 0));
-        studentPanel.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(617, 526, 81, 10));
 
         jSeparator13.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator13.setForeground(new java.awt.Color(0, 0, 0));
@@ -1267,7 +1250,9 @@ public class facultyGUI extends facultyDatabase {
     }//GEN-LAST:event_createAssignmentButtonActionPerformed
 
     private void assignmentComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assignmentComboBoxActionPerformed
-        modifyGet(assignmentComboBox.getSelectedItem().toString());
+        if (assignmentComboBox.getSelectedItem() != null)
+            mem = assignmentComboBox.getSelectedItem().toString();
+        modifyGet(mem);
     }//GEN-LAST:event_assignmentComboBoxActionPerformed
 
     private void modifyAssignmentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyAssignmentButtonActionPerformed
@@ -1393,6 +1378,14 @@ public class facultyGUI extends facultyDatabase {
         yMouse = evt.getY();
     }//GEN-LAST:event_formMousePressed
 
+    private void comboBoxCourseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxCourseActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxCourseActionPerformed
+
+    private void comboBoxModifyAssignmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxModifyAssignmentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxModifyAssignmentActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1476,19 +1469,11 @@ public class facultyGUI extends facultyDatabase {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator10;
-    private javax.swing.JSeparator jSeparator11;
-    private javax.swing.JSeparator jSeparator12;
     private javax.swing.JSeparator jSeparator13;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
-    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
-    private javax.swing.JSeparator jSeparator8;
-    private javax.swing.JSeparator jSeparator9;
     private javax.swing.JButton logout1;
     private javax.swing.JButton logout2;
     private javax.swing.JButton logout3;
